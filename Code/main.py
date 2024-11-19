@@ -1,92 +1,8 @@
-import openai
 import csv
-import time
 import json
-import subprocess
-
-class LLMHelper:
-    """
-    A helper class for interacting with the OpenAI API.
-
-    Example response from the OpenAI API:
-    {
-        "id": "chatcmpl-abc123",
-        "object": "chat.completion",
-        "created": 1677858242,
-        "model": "gpt-4o-mini",
-        "usage": {
-            "prompt_tokens": 13,
-            "completion_tokens": 7,
-            "total_tokens": 20,
-            "completion_tokens_details": {
-                "reasoning_tokens": 0
-            }
-        },
-        "choices": [
-            {
-                "message": {
-                    "role": "assistant",
-                    "content": "\n\nThis is a test!"
-                },
-                "logprobs": null,
-                "finish_reason": "stop",
-                "index": 0
-            }
-        ]
-    }
-    """
-
-
-    def __init__(self, api_key, model="gpt-3.5-turbo-1106"):
-        """
-        Initialize the LLMHelper with the given API key and model.
-
-        Args:
-            api_key (str): The OpenAI API key.
-            model (str): The name of the OpenAI model to use.
-        """
-        openai.api_key = api_key
-        self.model = model
-
-    def get_response(self, history, prompt, model=None):
-        """
-        Get a response from the OpenAI API based on the provided history and prompt.
-
-        Args:
-            history (list): The chat history for context.
-            prompt (str): The prompt to send to the model.
-            model (str, optional): The model to use. Defaults to self.model.
-
-        Returns:
-            dict or int: The response from the API, or an error code.
-        """
-        if model is None:
-            model = self.model
-
-        history.append({"role": "user", "content": prompt})
-        done_it = False
-        limit = 12
-        while not done_it and limit != 0:
-            try:
-                time.sleep(1)
-                response = openai.ChatCompletion.create(
-                    model=model,
-                    messages=history,
-                )
-                done_it = True
-                history.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
-                return response
-            except Exception as e:
-                print("(gpt error)")
-                print(e)
-                if str(e).startswith("This model's maximum context length"):
-                    # Tokens per minute rate has not been exceeded, just message itself is too long to input
-                    history.pop(-1)
-                    return -1
-                # Most likely tokens per minute rate has been exceeded so wait a little
-                limit -= 1
-                time.sleep(10)
-        return -2
+import LLMHelper
+from dotenv import load_dotenv
+import os
 
 class ConversationHandler:
     """
@@ -117,7 +33,7 @@ class Experiment:
     A class to run the experiment using provided CSV files and prompts.
     """
 
-    def __init__(self, csv_files, prompts, using_code=False, max_examples=10, max_attempts=10):
+    def __init__(self, csv_files, prompts, llm_helper, using_code=False, max_examples=10, max_attempts=10):
         """
         Initialize the experiment with the given parameters.
 
@@ -130,12 +46,12 @@ class Experiment:
         """
         self.csv_files = csv_files
         self.prompts = prompts
+        self.llm_helper = llm_helper
         self.using_code = using_code
         self.max_examples = max_examples
         self.max_attempts = max_attempts
         self.experiment_stats = {}
         self.conversation_handler = ConversationHandler()
-        self.llm_helper = LLMHelper(api_key="YOUR_API_KEY")
 
     def run(self):
         """
@@ -377,16 +293,35 @@ csv_files = [
     "../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic/own.ComplexFlipPos_2.csv",
 ]
 
+load_dotenv()
+
+USE_OPENAI = False
+
+if USE_OPENAI:
+    llm_helper = LLMHelper.openai.OpenAIHelper(
+        api_key=os.getenv("OPENAI_KEY"),
+        model=os.getenv("OPENAI_MODEL")
+        )
+else:
+    llm_helper = LLMHelper.huggingface.HuggingFaceHelper(
+        model_name=os.getenv("HUGGINGFACE_MODEL"),
+        hf_token=os.getenv("HUGGINGFACE_TOKEN")
+        )
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
+
+
 # Set constants
 USING_CODE = False
 MAX_EXAMPLES = 10
 MAX_ATTEMPTS = 10
-GENERAL_MODEL = "gpt-3.5-turbo-1106"
 
 # Run the experiment
 experiment = Experiment(
     csv_files=csv_files,
     prompts=prompts,
+    llm_helper=llm_helper,
     using_code=USING_CODE,
     max_examples=MAX_EXAMPLES,
     max_attempts=MAX_ATTEMPTS,
