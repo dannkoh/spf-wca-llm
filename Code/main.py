@@ -59,9 +59,11 @@ class Experiment:
         Run the experiment by processing each CSV file.
         """
         for file_path in self.csv_files:
-            self.process_file(file_path)
+            java_file_name = os.path.basename(file_path).replace(".csv", ".java").removeprefix("own.")
+            java_dir = os.path.join("../Dataset/java_programs/own/", java_file_name)
+            self.process_file(file_path=file_path, source_filepath=java_dir)
 
-    def process_file(self, file_path):
+    def process_file(self, file_path, source_filepath):
         """
         Process a single CSV file.
 
@@ -75,9 +77,11 @@ class Experiment:
         # Get constraints from SPF
         constraints = self.get_constraints_from_csv(file_path)
 
+        source = self.get_source_file(filepath=source_filepath)
+
         # Get initial generalization
         self.conversation_handler.print_and_save(" " * 20 + "GET INITIAL GENERALISATION")
-        prompt_get_gen = self.generate_initial_prompt(constraints)
+        prompt_get_gen = self.generate_initial_prompt(constraints=constraints, source_code=source)
         self.conversation_handler.print_and_save(prompt_get_gen)
 
         # Update conversation history
@@ -93,6 +97,34 @@ class Experiment:
             return  # Early exit if extraction fails
 
         self.evaluate_and_update_generalisation(constraints, generalisation, llm_get_gen, convo_stats, file_path)
+
+
+    def get_source_file(self, filepath):
+        """
+        Get the source code from the file.
+
+        Args:
+            filepath (str): The path to the file.
+
+        Returns:
+            str: The source code.
+        """
+        with open(filepath, "r") as file:
+            source = file.read()
+        
+        if filepath.endswith(".py"):
+            language = "python"
+        elif filepath.endswith(".java"):
+            language = "java"
+        elif filepath.endswith(".c"):
+            language = "c"
+        elif filepath.endswith(".cpp"):
+            language = "cpp"
+        else:
+            raise ValueError("Unsupported language")
+        source_file = f"\n```{language}\n{source}\n```\n"
+        return source_file
+
 
     def get_constraints_from_csv(self, file_path):
         """
@@ -116,7 +148,7 @@ class Experiment:
                 constraints.append(con.strip())
         return constraints
 
-    def generate_initial_prompt(self, constraints):
+    def generate_initial_prompt(self, constraints, source_code):
         """
         Generate the initial prompt for generalization.
 
@@ -127,6 +159,13 @@ class Experiment:
             str: The generated prompt.
         """
         prompt_get_gen = self.prompts["get_gen_start"]
+
+        prompt_get_gen += "\n\nBelow is the source code for the SPF problem:\n"
+        prompt_get_gen += source_code
+
+
+
+
         for example_id in range(self.max_examples):
             prompt_get_gen += f"\n\nValid constraints for {example_id + 1} inputs (N={example_id + 1}):\n"
             prompt_get_gen += str(constraints[example_id])
@@ -365,10 +404,29 @@ prompts = {
 
 # Define CSV files
 csv_files = [
-    "../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic/own.ComplexFlipPos_2.csv",
-    # Add more CSV files as needed
+	"../Dataset/spf_output/SameHundred/verbose/heuristic/own.SameHundred.csv",
+	"../Dataset/spf_output/SameLowercase/verbose/heuristic/own.SameLowercase.csv",
+	"../Dataset/spf_output/SameOnlyThird/verbose/heuristic/own.SameOnlyThird.csv",
+	"../Dataset/spf_output/SameString/verbose/heuristic/own.SameString.csv",
+	"../Dataset/spf_output/SimpleAscendingLast/verbose/heuristic/own.SimpleAscendingLast.csv",
+	"../Dataset/spf_output/SimpleEveryThird/verbose/heuristic/own.SimpleEveryThird.csv",
+	"../Dataset/spf_output/SimpleSignFlip/verbose/heuristic/own.SimpleSignFlip.csv",
+	"../Dataset/spf_output/SimpleSymmetric/verbose/heuristic/own.SimpleSymmetric.csv",
+	"../Dataset/spf_output/SimpleTrueFalse/verbose/heuristic/own.SimpleTrueFalse.csv",
+	"../Dataset/spf_output/SimpleUnique/verbose/heuristic/own.SimpleUnique.csv",
+	"../Dataset/spf_output/WeirdConstDiff/verbose/heuristic/own.WeirdConstDiff.csv",
+	"../Dataset/spf_output/WeirdFibonacci/verbose/heuristic/own.WeirdFibonacci.csv",
+	"../Dataset/spf_output/WeirdTimes/verbose/heuristic/own.WeirdTimes.csv",
+	"../Dataset/spf_output/BadgerHash/verbose/heuristic/own.BadgerHash.csv",
+	"../Dataset/spf_output/BadgerPassword/verbose/heuristic/own.BadgerPassword.csv",
+	"../Dataset/spf_output/BadgerUsername/verbose/heuristic/own.BadgerUsername.csv",
+	"../Dataset/spf_output/ComplexFlipPos_1/verbose/heuristic/own.ComplexFlipPos_1.csv",
+	"../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic/own.ComplexFlipPos_2.csv",
+	"../Dataset/spf_output/ComplexHalfEqual/verbose/heuristic/own.ComplexHalfEqual.csv",
+	"../Dataset/spf_output/ComplexMidPeak/verbose/heuristic/own.ComplexMidPeak.csv",
+	"../Dataset/spf_output/ComplexPalindrome/verbose/heuristic/own.ComplexPalindrome.csv",
+	"../Dataset/spf_output/ComplexOddsEvens/verbose/heuristic/own.ComplexOddsEvens.csv",
 ]
-
 load_dotenv()
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 

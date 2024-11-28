@@ -2,7 +2,18 @@
 ############################################################
                     GET INITIAL GENERALISATION
 ############################################################
-I'm experimenting with a program and trying to find what makes an increasingly large set of inputs valid. So far I have found one possible set of correct constraints/ conditions (not the only one) which define a valid input. Here they are.
+
+
+
+
+
+
+I'm experimenting with a program and trying to find what makes an increasingly large set of inputs valid.
+Here is the program i am testing:
+
+java code.....
+
+ So far I have found one possible set of correct constraints/ conditions (not the only one) which define a valid input. Here they are.
 
 Valid constraints for 1 inputs (N=1):
 put0_0 != get0, 0 == ((get1 + get0) % 1), 0 == ((put0_1 + put0_0) % 1)
