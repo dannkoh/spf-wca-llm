@@ -35,7 +35,7 @@ class OpenAIHelper(BaseLLMHelper):
     """
 
 
-    def __init__(self, api_key, model="gpt-3.5-turbo-1106"):
+    def __init__(self, api_key, model="gpt-4o"):
         """
         Initialize the LLMHelper with the given API key and model.
 
@@ -46,7 +46,7 @@ class OpenAIHelper(BaseLLMHelper):
         openai.api_key = api_key
         self.model = model
 
-    def get_response(self, history, prompt, model=None):
+    def get_response(self, history, model=None):
         """
         Get a response from the OpenAI API based on the provided history and prompt.
 
@@ -61,18 +61,16 @@ class OpenAIHelper(BaseLLMHelper):
         if model is None:
             model = self.model
 
-        history.append({"role": "user", "content": prompt})
         done_it = False
         limit = 12
         while not done_it and limit != 0:
             try:
                 time.sleep(1)
-                response = openai.ChatCompletion.create(
+                response = openai.chat.completions.create(
                     model=model,
                     messages=history,
                 )
                 done_it = True
-                history.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
                 return response
             except Exception as e:
                 print("(gpt error)")

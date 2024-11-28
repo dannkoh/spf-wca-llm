@@ -1,8 +1,9 @@
+import os
 import csv
 import json
-import LLMHelper
 from dotenv import load_dotenv
-import os
+
+from LLMHelper import OpenAIHelper, HuggingFaceHelper
 
 class ConversationHandler:
     """
@@ -26,7 +27,6 @@ class ConversationHandler:
         print(new_message)
         self.conversation.append("\n" + "#" * 60 + "\n")
         self.conversation.append(new_message)
-        # stop = input("(ENTER to continue)")
 
 class Experiment:
     """
@@ -40,6 +40,7 @@ class Experiment:
         Args:
             csv_files (list): List of CSV file paths.
             prompts (dict): Dictionary of prompt templates.
+            llm_helper (object): Initialized LLM helper (OpenAIHelper or HuggingFaceHelper).
             using_code (bool, optional): Whether to use code generation. Defaults to False.
             max_examples (int, optional): Maximum number of examples to process. Defaults to 10.
             max_attempts (int, optional): Maximum number of generalization attempts. Defaults to 10.
@@ -70,8 +71,8 @@ class Experiment:
         gen_sys = "get_gen_sys_code" if self.using_code else "get_gen_sys_llm"
         llm_get_gen = [{"role": "system", "content": self.prompts[gen_sys]}]
 
-        conversation = []
         convo_stats = {}
+        # Get constraints from SPF
         constraints = self.get_constraints_from_csv(file_path)
 
         # Get initial generalization
@@ -79,13 +80,17 @@ class Experiment:
         prompt_get_gen = self.generate_initial_prompt(constraints)
         self.conversation_handler.print_and_save(prompt_get_gen)
 
-        response_get_gen = self.llm_helper.get_response(llm_get_gen, prompt_get_gen)
-        content_get_gen = response_get_gen['choices'][0]['message']['content']
-        self.conversation_handler.print_and_save(content_get_gen)
+        # Update conversation history
+        llm_get_gen.append({"role": "user", "content": prompt_get_gen})
 
-        generalisation = self.extract_generalisation(content_get_gen)
+        response_get_gen = self.llm_helper.get_response(history=llm_get_gen)
+        content_get_gen = response_get_gen.choices[0].message.content
+        self.conversation_handler.print_and_save(content_get_gen)
+        llm_get_gen.append({"role": "assistant", "content": content_get_gen})
+
+        generalisation = self.extract_generalisation(content_get_gen, llm_get_gen)
         if generalisation is None:
-            return
+            return  # Early exit if extraction fails
 
         self.evaluate_and_update_generalisation(constraints, generalisation, llm_get_gen, convo_stats, file_path)
 
@@ -108,7 +113,7 @@ class Experiment:
                 con = row[12]
                 # Preprocess format of constraints
                 con = con.replace("CONST_", "").replace(" &&", ",").replace("CONSTRAINT N/A", "None")
-                constraints.append(con)
+                constraints.append(con.strip())
         return constraints
 
     def generate_initial_prompt(self, constraints):
@@ -133,41 +138,46 @@ class Experiment:
             prompt_get_gen += self.prompts["get_gen_end_code2"]
         return prompt_get_gen
 
-    def extract_generalisation(self, content_get_gen):
+    def extract_generalisation(self, content_get_gen, llm_get_gen):
         """
         Extract the generalisation from the LLM's response.
 
         Args:
             content_get_gen (str): The content from the LLM's response.
+            llm_get_gen (list): The LLM conversation history.
 
         Returns:
-            str: The extracted generalisation.
+            str: The extracted generalisation, or None if extraction fails.
         """
-        generalisation_empty = "FORMAL" in content_get_gen and len(content_get_gen.split("FORMAL")[1]) < 10
+        generalisation_empty = "FORMAL" in content_get_gen and len(content_get_gen.split("FORMAL", 1)[1].strip()) < 10
         gen_limit = 5
         while ("FORMAL" not in content_get_gen or generalisation_empty) and gen_limit != 0:
-            # Response not using correct headings, repeat formatting instructions to LLM
-            gen_message = self.prompts["get_gen_sys_code"] if self.using_code else self.prompts["get_gen_sys_llm"]
-            if generalisation_empty:
-                gen_message = "Your response stopped short. Continue where you left off with a new line character and the heading 'FORMAL'."
+            gen_message = "Your response is missing or has an incomplete 'FORMAL' section. Please provide the 'FORMAL' section with the complete generalisation."
 
             self.conversation_handler.print_and_save(gen_message)
-            response_get_gen = self.llm_helper.get_response([], gen_message)
-            content_get_gen = response_get_gen['choices'][0]['message']['content']
+
+            # Update conversation history
+            llm_get_gen.append({"role": "user", "content": gen_message})
+
+            response_get_gen = self.llm_helper.get_response(history=llm_get_gen)
+            content_get_gen = response_get_gen.choices[0].message.content
             self.conversation_handler.print_and_save(content_get_gen)
-            generalisation_empty = "FORMAL" in content_get_gen and len(content_get_gen.split("FORMAL")[1]) < 10
+
+            # Append assistant's response
+            llm_get_gen.append({"role": "assistant", "content": content_get_gen})
+
+            generalisation_empty = "FORMAL" in content_get_gen and len(content_get_gen.split("FORMAL", 1)[1].strip()) < 10
             gen_limit -= 1
 
         if "FORMAL" in content_get_gen:
-            generalisation = content_get_gen.split("FORMAL")[1]
-            generalisation = generalisation.strip(":\n ")
+            generalisation = content_get_gen.split("FORMAL", 1)[1].strip(":\n ")
             if self.using_code:
-                code_blocks = generalisation.split("```")
-                if len(code_blocks) > 1:
-                    generalisation = code_blocks[1].replace("python", "").strip()
-                # Append missing code if necessary
-                if "return" in generalisation.split("\n")[-1]:
-                    generalisation += "\n\nN = int(input(\"N=\"))\nconstraints = generate_constraints(N)\nconstraints = \", \".join(constraints)\nprint(constraints)"
+                # Extract code block
+                if "```" in generalisation:
+                    generalisation = generalisation.split("```")[1].replace("python", "").strip()
+                else:
+                    # Handle case where code block markers are missing
+                    generalisation = generalisation.strip()
             return generalisation
         else:
             return None
@@ -179,60 +189,127 @@ class Experiment:
         Args:
             constraints (list): List of constraints.
             generalisation (str): The current generalisation.
-            llm_get_gen (list): The LLM system messages.
+            llm_get_gen (list): The LLM conversation history.
             convo_stats (dict): Dictionary to store conversation statistics.
             file_path (str): The path to the CSV file.
         """
         for attempt_id in range(self.max_attempts):
             self.conversation_handler.print_and_save(" " * 20 + f"ATTEMPT NUMBER {attempt_id + 1}")
-
             eval_results = []
-
-            # Save generalisation to file
             test_name = file_path.split("/")[-1][:-4]
-            test_path = f"generals/{test_name}"
-            test_path += ".py" if self.using_code else ".txt"
+            test_path = "generals/" + str(test_name)
+            test_path = test_path + ".py" if self.using_code else test_path + ".txt"
             with open(test_path, "w") as file:
                 file.write(generalisation)
 
-            # Evaluate predictions for each example
             for example_id in range(self.max_examples):
-                print(" " * 20 + f"#{attempt_id + 1}  EVALUATING EXAMPLE NUMBER {example_id + 1}")
-                example_eval = {"prediction": None, "matches": None, "reason": None}
+                # Apply the generalisation to each N
+                apply_gen_sys = [{"role": "system", "content": self.prompts["apply_gen_sys"]}]
+                apply_gen_start = self.prompts["apply_gen_start"]
+                prompt_apply_gen = apply_gen_start + generalisation + "\n```\n"
+                prompt_apply_gen += f"\n\nCalculate the constraints for N={example_id + 1}.\n"
 
-                # Additional evaluation code would be implemented here
-                # For brevity, it's omitted in this refactoring
+                self.conversation_handler.print_and_save(prompt_apply_gen)
 
-                eval_results.append(example_eval)
+                # Update conversation history
+                apply_gen_sys.append({"role": "user", "content": prompt_apply_gen})
+
+                response_apply_gen = self.llm_helper.get_response(history=apply_gen_sys)
+                content_apply_gen = response_apply_gen.choices[0].message.content
+                self.conversation_handler.print_and_save(content_apply_gen)
+
+                # Append assistant's response
+                apply_gen_sys.append({"role": "assistant", "content": content_apply_gen})
+
+                # Extract the ANSWER section
+                if "ANSWER" in content_apply_gen:
+                    predicted_constraints = content_apply_gen.split("ANSWER", 1)[1].strip(":\n ")
+                else:
+                    predicted_constraints = "None"
+
+                # Compare predicted constraints with actual constraints
+                expected_constraints = constraints[example_id]
+                matches = self.compare_constraints(expected_constraints, predicted_constraints)
+
+                eval_results.append({
+                    "example_id": example_id + 1,
+                    "expected": expected_constraints,
+                    "predicted": predicted_constraints,
+                    "matches": matches
+                })
 
             # Check if all predictions were correct
-            true_matches = [example_eval["matches"] for example_eval in eval_results if example_eval["matches"] is not None]
+            true_matches = [example_eval["matches"] for example_eval in eval_results]
             if False not in true_matches:
+                # All predictions match
                 convo_stats["succeeded"] = True
                 convo_stats["attempts"] = attempt_id + 1
                 convo_stats["examples_right"] = self.max_examples
                 break
 
-            # Check if maximum attempts reached
+            # Break if this was the last attempt at generalising
             if attempt_id + 1 == self.max_attempts:
                 convo_stats["succeeded"] = False
-                convo_stats["attempts"] = self.max_attempts
-                convo_stats["examples_right"] = true_matches.count(True)
+                convo_stats["attempts"] = attempt_id + 1
+                convo_stats["examples_right"] = sum(true_matches)
                 break
 
-            # Provide feedback and get new generalisation
+            # Generate feedback and get a new generalisation
             self.conversation_handler.print_and_save(" " * 20 + f"#{attempt_id + 1}  GET NEW GENERALISATION")
             prompt_get_gen = self.generate_feedback_prompt(eval_results)
             self.conversation_handler.print_and_save(prompt_get_gen)
 
-            response_get_gen = self.llm_helper.get_response(llm_get_gen, prompt_get_gen)
-            content_get_gen = response_get_gen['choices'][0]['message']['content']
+            # Update conversation history
+            llm_get_gen.append({"role": "user", "content": prompt_get_gen})
+
+            response_get_gen = self.llm_helper.get_response(history=llm_get_gen)
+            content_get_gen = response_get_gen.choices[0].message.content
             self.conversation_handler.print_and_save(content_get_gen)
 
-            generalisation = self.extract_generalisation(content_get_gen)
+            # Append assistant's response
+            llm_get_gen.append({"role": "assistant", "content": content_get_gen})
+
+            generalisation = self.extract_generalisation(content_get_gen, llm_get_gen)
+            if generalisation is None:
+                break
 
         self.conversation_handler.print_and_save("(done with that example)")
         self.save_results(file_path, convo_stats)
+
+    def compare_constraints(self, expected_constraints, predicted_constraints):
+        """
+        Compare expected and predicted constraints using the LLM.
+
+        Args:
+            expected_constraints (str): The expected constraints.
+            predicted_constraints (str): The predicted constraints from the LLM.
+
+        Returns:
+            bool: True if constraints match, False otherwise.
+        """
+        compare_sys = [{"role": "system", "content": self.prompts["compare_sys"]}]
+
+        prompt_compare = self.prompts["compare_start"] + "\nYOUR CONSTRAINTS:\n" + \
+            predicted_constraints + "\n\nSPF CONSTRAINTS:\n" + expected_constraints
+
+        self.conversation_handler.print_and_save(prompt_compare)
+
+        # Update conversation history
+        compare_sys.append({"role": "user", "content": prompt_compare})
+
+        response_compare = self.llm_helper.get_response(history=compare_sys)
+        content_compare = response_compare.choices[0].message.content
+        self.conversation_handler.print_and_save(content_compare)
+
+        # Append assistant's response
+        compare_sys.append({"role": "assistant", "content": content_compare})
+
+        if "ANSWER" in content_compare:
+            matches_text = content_compare.split("ANSWER", 1)[1].strip(":\n ").upper()
+            matches = "MATCHES" in matches_text
+        else:
+            matches = False  # Default to False if the answer section is missing
+        return matches
 
     def generate_feedback_prompt(self, eval_results):
         """
@@ -245,13 +322,10 @@ class Experiment:
             str: The feedback prompt.
         """
         prompt_get_gen = self.prompts["new_gen_start_code"] if self.using_code else self.prompts["new_gen_start_llm"]
-        for example_id, result in enumerate(eval_results):
-            if result["matches"]:
-                prompt_get_gen += f"For N={example_id + 1}, the generalisation output correctly fits the given data\n\n"
-            elif result["reason"] == "ERROR":
-                prompt_get_gen += f"For N={example_id + 1}, there was an error in generating constraints\n\n"
-            else:
-                prompt_get_gen += f"For N={example_id + 1}, {result['reason']}\n\n"
+        for result in eval_results:
+            prompt_get_gen += f"\nN={result['example_id']}:\n"
+            prompt_get_gen += f"Expected constraints:\n{result['expected']}\n"
+            prompt_get_gen += f"Your generalisation's constraints:\n{result['predicted']}\n"
         prompt_get_gen = prompt_get_gen.strip()
         return prompt_get_gen
 
@@ -264,6 +338,7 @@ class Experiment:
             convo_stats (dict): Conversation statistics.
         """
         file_name = file_path.split("/")[-1][:-4]
+        # Save conversation log
         with open(f"saved_logs/{file_name}-log.txt", "w") as file:
             file.write("".join(self.conversation_handler.conversation))
         self.experiment_stats[file_name] = convo_stats
@@ -275,42 +350,40 @@ class Experiment:
 # Define prompts
 prompts = {
     "get_gen_sys_code": "Always respond first with an informal analysis in natural language and maybe some mathematics (under the heading 'CASUAL', all caps), then with a formal Python program answer inside a code block (under the heading 'FORMAL', all caps). Make sure there is only one code block in your answer.",
-    "get_gen_sys_llm": "Always respond first with an informal analysis in natural language (under the heading 'CASUAL', all caps), then with a formal/ mathematical answer (under the heading 'FORMAL', all caps). Make no further comments after the formal section like 'This should hold true', for example.",
-    "get_gen_start": "I'm experimenting with a program and trying to find what makes an increasingly large set of inputs valid. So far I have found one possible set of correct constraints/ conditions (not the only one) which define a valid input. Here they are.",
-    "get_gen_end": "\n\nGeneralise what makes the set of constraints valid such that we can recover a valid set for N inputs. Don't overfit the data here but also dont oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalisation.",
+    "get_gen_sys_llm": "Always respond first with an informal analysis in natural language (under the heading 'CASUAL', all caps), then with a formal/mathematical answer (under the heading 'FORMAL', all caps). Make no further comments after the formal section like 'This should hold true', for example.",
+    "get_gen_start": "I'm experimenting with a program and trying to find what makes an increasingly large set of inputs valid. So far I have found one possible set of correct constraints/conditions (not the only one) which define a valid input. Here they are.",
+    "get_gen_end": "\n\nGeneralise what makes the set of constraints valid such that we can recover a valid set for N inputs. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalisation.",
     "get_gen_end_code1": "\n\nUse this code template to formally express the generalisation for N constraints:\n```python\n",
-    "get_gen_end_code2": "```\n\nEach inequality is usually in the form \"x op y\" where x, y are some variable, constant or some formula of variables and/ or constants, and op is an operation or inequality.",
-    "apply_gen_sys": "Always respond first with a step by step application of the generalisation (under the heading 'WORKING OUT', all caps), then with the final answer (under the heading 'ANSWER', all caps), giving the answer as a comma separated list of constraints without any other natural language like 'here is the set'. If the answer is the empty set just put 'None' as the answer. Make no further comments after the answer section, like 'This is what the generalisation says should hold' for example, just stop.",
+    "get_gen_end_code2": "```\n\nEach inequality is usually in the form \"x op y\" where x, y are some variable, constant or some formula of variables and/or constants, and op is an operation or inequality.",
+    "apply_gen_sys": "Always respond first with a step-by-step application of the generalisation (under the heading 'WORKING OUT', all caps), then with the final answer (under the heading 'ANSWER', all caps), giving the answer as a comma-separated list of constraints without any other natural language like 'here is the set'. If the answer is the empty set just put 'None' as the answer. Make no further comments after the answer section like 'This is what the generalisation says should hold', for example, just stop.",
     "apply_gen_start": "I have a generalisation defining a set of inequalities for a set of variables. The definition is general for an arbitrary N amount of variables. Here is the generalisation:\n\n```\n",
-    "compare_sys": "Always respond first with your thinking process (under the heading 'THINKING', all caps), then with the final answer of 'MATCHES'(all caps) if matches or 'DIFFERENT'(all caps) if doesn't match (under the heading 'ANSWER', all caps), then reiterate the place/ reason it does not match  (under the heading 'REASON', all caps).",
-    "compare_start": "I have two sets of inequalities over variables. Tell me if these two sets are the same or not, and how they differ if they do. Ignore the order of constraints and differences in formatting (e.g spaces, newline characters and exact variable names ('s_0', 's0', 's(0)', '\\{s_0\\}' and so on are all the same), also ignore any text that isnt a constraints like 'here is the set:') though the numbers associated with variable names should be the same. 'There are no constraints' or 'None' or anything like that is equivalent to '' or the empty set/ string. If the only difference between the two is formatting then they actually match. They're only different if one set is bigger than the other or if they contain constraints that aren't in the other. Try to keep your final reasons short but not generic and without using bullet points or numbered lists.\n\n",
-    "new_gen_start_code": "I have run your code for several concrete values of N. Some of the outputs were not correct. Change your generalisation and code to account for the following outputs (Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL').\n\n",
-    "new_gen_start_llm": "Remember to always structure your reply with the same headings. I have applied you generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs (Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL').\n\n",
+    "compare_sys": "Always respond first with your thinking process (under the heading 'THINKING', all caps), then with the final answer of 'MATCHES' (all caps) if matches or 'DIFFERENT' (all caps) if doesn't match (under the heading 'ANSWER', all caps), then reiterate the place/reason it does not match (under the heading 'REASON', all caps).",
+    "compare_start": "I have two sets of inequalities over variables. Tell me if these two sets are the same or not, and how they differ if they do. Ignore the order of constraints and differences in formatting (e.g., spaces, newline characters, and exact variable names like 's_0', 's0', 's(0)', '{s_0}' are all the same), though the numbers associated with variable names should be the same. 'There are no constraints' or 'None' is equivalent to the empty set. If the only difference between the two is formatting, then they actually match. They're only different if one set is bigger than the other or if they contain constraints that aren't in the other. Try to keep your final reasons short but not generic and without using bullet points or numbered lists.\n\n",
+    "new_gen_start_code": "I have run your code for several concrete values of N. Some of the outputs were not correct. Change your generalisation and code to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'.\n\n",
+    "new_gen_start_llm": "Remember to always structure your reply with the same headings. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'.\n\n",
 }
 
 # Define CSV files
 csv_files = [
     "../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic/own.ComplexFlipPos_2.csv",
+    # Add more CSV files as needed
 ]
 
 load_dotenv()
-
-USE_OPENAI = False
-
-if USE_OPENAI:
-    llm_helper = LLMHelper.openai.OpenAIHelper(
-        api_key=os.getenv("OPENAI_KEY"),
-        model=os.getenv("OPENAI_MODEL")
-        )
-else:
-    llm_helper = LLMHelper.huggingface.HuggingFaceHelper(
-        model_name=os.getenv("HUGGINGFACE_MODEL"),
-        hf_token=os.getenv("HUGGINGFACE_TOKEN")
-        )
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+USE_OPENAI = True  # Set to False if using HuggingFace model
 
-
+if USE_OPENAI:
+    llm_helper = OpenAIHelper(
+        api_key=os.getenv("OPENAI_KEY"),
+        model=os.getenv("OPENAI_MODEL")
+    )
+else:
+    llm_helper = HuggingFaceHelper(
+        model_name=os.getenv("HUGGINGFACE_MODEL"),
+        hf_token=os.getenv("HUGGINGFACE_TOKEN")
+    )
 
 # Set constants
 USING_CODE = False
@@ -327,3 +400,24 @@ experiment = Experiment(
     max_attempts=MAX_ATTEMPTS,
 )
 experiment.run()
+
+# Save overall statistics
+overall_stats = {
+    "succeeded": 0,
+    "failed": 0,
+    "average_attempts": 0,
+    "max_attempts": MAX_ATTEMPTS,
+    "average_examples_right": 0,
+    "max_examples_right": MAX_EXAMPLES,
+}
+for key, value in experiment.experiment_stats.items():
+    overall_stats["succeeded"] += 1 if value["succeeded"] else 0
+    overall_stats["failed"] += 0 if value["succeeded"] else 1
+    overall_stats["average_attempts"] += value["attempts"]
+    overall_stats["average_examples_right"] += value["examples_right"]
+total_files = len(experiment.experiment_stats)
+if total_files > 0:
+    overall_stats["average_attempts"] /= total_files
+    overall_stats["average_examples_right"] /= total_files
+with open("overall_stats.json", "w") as file:
+    json.dump(overall_stats, file)

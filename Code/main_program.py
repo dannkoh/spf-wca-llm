@@ -206,7 +206,7 @@ for file_path in csv_files:
 				# print_and_save(conversation, prompt_apply_gen)
 
 				response_apply_gen = get_response(llm_apply_gen, prompt_apply_gen)
-				content_apply_gen = response_apply_gen['choices'][0]['message']['content']
+				content_apply_gen = response_apply_gen.choices[0].message.content
 				# print_and_save(conversation, content_apply_gen)
 
 				answer_limit = 10
@@ -217,7 +217,7 @@ for file_path in csv_files:
 					print("(bad answer)")
 					# response_apply_gen = get_response(llm_apply_gen, "Please provide the comma seperated answer under the heading 'ANSWER'")
 					response_apply_gen = get_response(llm_apply_gen, prompts["apply_gen_sys"])
-					content_apply_gen = response_apply_gen['choices'][0]['message']['content']
+					content_apply_gen = response_apply_gen.choices[0].message.content
 					# print_and_save(conversation, content_apply_gen)
 					answer_limit -= 1
 				prediction = content_apply_gen.split("ANSWER")[1]
