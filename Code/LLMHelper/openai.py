@@ -1,6 +1,8 @@
 import openai
 import time
 from LLMHelper.base import BaseLLMHelper
+from tqdm import tqdm
+import sys
 
 class OpenAIHelper(BaseLLMHelper):
     """
@@ -35,7 +37,7 @@ class OpenAIHelper(BaseLLMHelper):
     """
 
 
-    def __init__(self, api_key, model="gpt-4o"):
+    def __init__(self, api_key, model):
         """
         Initialize the LLMHelper with the given API key and model.
 
@@ -72,14 +74,23 @@ class OpenAIHelper(BaseLLMHelper):
                 )
                 done_it = True
                 return response
-            except Exception as e:
-                print("(gpt error)")
+            except openai.BadRequestError as e:
+                if "maximum context length" in str(e):
+                    # Try to reduce context by keeping only the last few messages
+                    if len(history) > 4:  # Keep system prompt + last few exchanges
+                        history = [history[0]] + history[-3:]  # System prompt + last 3 messages
+                        continue
+                    return {"choices": [{"message": {"content": "Error: Context too long even after reduction"}}]}
+            except openai.RateLimitError as e:
+                wait_time = 60
+                print(f"Rate limit exceeded, waiting {wait_time} seconds")
                 print(e)
-                if str(e).startswith("This model's maximum context length"):
-                    # Tokens per minute rate has not been exceeded, just message itself is too long to input
-                    history.pop(-1)
-                    return -1
-                # Most likely tokens per minute rate has been exceeded so wait a little
                 limit -= 1
-                time.sleep(10)
-        return -2
+                for _ in tqdm(range(wait_time), desc="Waiting", unit="s"):
+                    time.sleep(1)
+                print("Retrying...")
+                continue
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                return {"choices": [{"message": {"content": f"Error: {str(e)}"}}]}
+        return {"choices": [{"message": {"content": "Error: Max retries exceeded"}}]}
