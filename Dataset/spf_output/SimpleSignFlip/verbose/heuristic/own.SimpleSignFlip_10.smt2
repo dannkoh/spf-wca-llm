@@ -9,7 +9,7 @@
 (declare-const in4 Int)
 (declare-const in3 Int)
 
-(assert (and (and (and (and (and (and (and (and  ( ==  in0 in1)  ( <  in1 in2))  ( ==  in2 in3))  ( <  in3 in4))  ( ==  in4 in5))  ( <  in5 in6))  ( ==  in6 in7))  ( <  in7 in8))  ( ==  in8 in9)))
+(assert (and (and (and (and (and (and (and (and  ( =  in0 in1)  ( <  in1 in2))  ( =  in2 in3))  ( <  in3 in4))  ( =  in4 in5))  ( <  in5 in6))  ( =  in6 in7))  ( <  in7 in8))  ( =  in8 in9)))
 
 (check-sat)
 (get-model)

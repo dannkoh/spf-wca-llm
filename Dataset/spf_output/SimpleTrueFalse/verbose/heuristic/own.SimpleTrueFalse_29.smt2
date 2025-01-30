@@ -28,7 +28,7 @@
 (declare-const in19 Int)
 (declare-const in18 Int)
 
-(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( ==  in0 1)  ( ==  in1 0))  ( ==  in2 1))  ( ==  in3 0))  ( ==  in4 1))  ( ==  in5 0))  ( ==  in6 1))  ( ==  in7 0))  ( ==  in8 1))  ( ==  in9 0))  ( ==  in10 1))  ( ==  in11 0))  ( ==  in12 1))  ( ==  in13 0))  ( ==  in14 1))  ( ==  in15 0))  ( ==  in16 1))  ( ==  in17 0))  ( ==  in18 1))  ( ==  in19 0))  ( ==  in20 1))  ( ==  in21 0))  ( ==  in22 1))  ( ==  in23 0))  ( ==  in24 1))  ( ==  in25 0))  ( ==  in26 1))  ( ==  in27 0))  ( ==  in28 1)))
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  in0 1)  ( =  in1 0))  ( =  in2 1))  ( =  in3 0))  ( =  in4 1))  ( =  in5 0))  ( =  in6 1))  ( =  in7 0))  ( =  in8 1))  ( =  in9 0))  ( =  in10 1))  ( =  in11 0))  ( =  in12 1))  ( =  in13 0))  ( =  in14 1))  ( =  in15 0))  ( =  in16 1))  ( =  in17 0))  ( =  in18 1))  ( =  in19 0))  ( =  in20 1))  ( =  in21 0))  ( =  in22 1))  ( =  in23 0))  ( =  in24 1))  ( =  in25 0))  ( =  in26 1))  ( =  in27 0))  ( =  in28 1)))
 
 (check-sat)
 (get-model)

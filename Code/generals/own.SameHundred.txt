@@ -1,3 +1,0 @@
-For a given input array of size N, the valid constraints necessary for the algorithm to execute successfully are:
-- For N=1, no specific constraints are required.
-- For N > 1, the constraints should be: inN >= 100, ... , in2 >= 100, in1 >= 100.

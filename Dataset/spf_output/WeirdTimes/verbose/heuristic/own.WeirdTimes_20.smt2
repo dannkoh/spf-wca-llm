@@ -19,7 +19,7 @@
 (declare-const in19 Int)
 (declare-const in18 Int)
 
-(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( ==  in1 ( *  in0 2))  ( ==  in2 ( *  in0 3)))  ( ==  in3 ( *  in0 4)))  ( ==  in4 ( *  in0 5)))  ( ==  in5 ( *  in0 6)))  ( ==  in6 ( *  in0 7)))  ( ==  in7 ( *  in0 8)))  ( ==  in8 ( *  in0 9)))  ( ==  in9 ( *  in0 10)))  ( ==  in10 ( *  in0 11)))  ( ==  in11 ( *  in0 12)))  ( ==  in12 ( *  in0 13)))  ( ==  in13 ( *  in0 14)))  ( ==  in14 ( *  in0 15)))  ( ==  in15 ( *  in0 16)))  ( ==  in16 ( *  in0 17)))  ( ==  in17 ( *  in0 18)))  ( ==  in18 ( *  in0 19)))  ( ==  in19 ( *  in0 20))))
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  in1 ( *  in0 2))  ( =  in2 ( *  in0 3)))  ( =  in3 ( *  in0 4)))  ( =  in4 ( *  in0 5)))  ( =  in5 ( *  in0 6)))  ( =  in6 ( *  in0 7)))  ( =  in7 ( *  in0 8)))  ( =  in8 ( *  in0 9)))  ( =  in9 ( *  in0 10)))  ( =  in10 ( *  in0 11)))  ( =  in11 ( *  in0 12)))  ( =  in12 ( *  in0 13)))  ( =  in13 ( *  in0 14)))  ( =  in14 ( *  in0 15)))  ( =  in15 ( *  in0 16)))  ( =  in16 ( *  in0 17)))  ( =  in17 ( *  in0 18)))  ( =  in18 ( *  in0 19)))  ( =  in19 ( *  in0 20))))
 
 (check-sat)
 (get-model)

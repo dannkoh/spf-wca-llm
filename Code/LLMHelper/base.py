@@ -1,6 +1,5 @@
-# llm_helpers/base.py
-
 from abc import ABC, abstractmethod
+from typing import List, Dict, Any
 
 class BaseLLMHelper(ABC):
     """
@@ -8,7 +7,7 @@ class BaseLLMHelper(ABC):
     """
 
     @abstractmethod
-    def get_response(self, history, prompt, model=None):
+    def get_response(self, history: List[Dict[str, str]], **kwargs) -> Dict[str, Any]:
         """
         Abstract method to get a response from the language model.
 
@@ -21,3 +20,36 @@ class BaseLLMHelper(ABC):
             dict or int: The response from the API, or an error code.
         """
         pass
+
+    @abstractmethod
+    def _setup_model(self) -> None:
+        """
+        Abstract method to setup the language model.
+        """
+        pass
+
+    
+class ResponseLLMHelper:
+    """
+    A helper class to mock the responses from language models to a standard format.
+    """
+    @staticmethod
+    def build_obj(content_str: str) -> object:
+        """
+        Build a mock response object with the given content string.
+
+        Args:
+            content_str (str): The content string to use in the response.
+
+        Returns:
+            object: A mock response object.
+        """
+        return type('obj', (object,), {
+            'choices': [
+                type('obj', (object,), {
+                    'message': type('obj', (object,), {
+                        'content': content_str
+                    })
+                })
+            ]
+        })

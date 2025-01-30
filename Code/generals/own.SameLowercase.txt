@@ -1,3 +1,0 @@
-For a valid set of constraints for N inputs where N is the length of the input array of characters:
-- Each character at index i (0-based) should satisfy the condition: 97 <= in(i) <= 122
-- These constraints are repeated for each index i from 0 to N-1

@@ -16,7 +16,7 @@
 (declare-const in14 Int)
 (declare-const in16 Int)
 
-(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( ==  in0 1)  ( ==  in1 0))  ( ==  in2 1))  ( ==  in3 0))  ( ==  in4 1))  ( ==  in5 0))  ( ==  in6 1))  ( ==  in7 0))  ( ==  in8 1))  ( ==  in9 0))  ( ==  in10 1))  ( ==  in11 0))  ( ==  in12 1))  ( ==  in13 0))  ( ==  in14 1))  ( ==  in15 0))  ( ==  in16 1)))
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  in0 1)  ( =  in1 0))  ( =  in2 1))  ( =  in3 0))  ( =  in4 1))  ( =  in5 0))  ( =  in6 1))  ( =  in7 0))  ( =  in8 1))  ( =  in9 0))  ( =  in10 1))  ( =  in11 0))  ( =  in12 1))  ( =  in13 0))  ( =  in14 1))  ( =  in15 0))  ( =  in16 1)))
 
 (check-sat)
 (get-model)

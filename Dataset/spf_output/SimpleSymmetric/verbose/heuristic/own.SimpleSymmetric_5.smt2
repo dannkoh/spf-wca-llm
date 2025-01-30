@@ -19,7 +19,7 @@
 (declare-const in2x0 Int)
 (declare-const in0x2 Int)
 
-(assert (and (and (and (and (and (and (and (and (and  ( ==  in1x0 in0x1)  ( ==  in2x0 in0x2))  ( ==  in2x1 in1x2))  ( ==  in3x0 in0x3))  ( ==  in3x1 in1x3))  ( ==  in3x2 in2x3))  ( ==  in4x0 in0x4))  ( ==  in4x1 in1x4))  ( ==  in4x2 in2x4))  ( ==  in4x3 in3x4)))
+(assert (and (and (and (and (and (and (and (and (and  ( =  in1x0 in0x1)  ( =  in2x0 in0x2))  ( =  in2x1 in1x2))  ( =  in3x0 in0x3))  ( =  in3x1 in1x3))  ( =  in3x2 in2x3))  ( =  in4x0 in0x4))  ( =  in4x1 in1x4))  ( =  in4x2 in2x4))  ( =  in4x3 in3x4)))
 
 (check-sat)
 (get-model)

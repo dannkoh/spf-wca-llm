@@ -10,7 +10,7 @@
 (declare-const in4 Int)
 (declare-const in3 Int)
 
-(assert (and (and (and (and (and (and (and (and (and  ( ==  in1 ( *  in0 2))  ( ==  in2 ( *  in0 3)))  ( ==  in3 ( *  in0 4)))  ( ==  in4 ( *  in0 5)))  ( ==  in5 ( *  in0 6)))  ( ==  in6 ( *  in0 7)))  ( ==  in7 ( *  in0 8)))  ( ==  in8 ( *  in0 9)))  ( ==  in9 ( *  in0 10)))  ( ==  in10 ( *  in0 11))))
+(assert (and (and (and (and (and (and (and (and (and  ( =  in1 ( *  in0 2))  ( =  in2 ( *  in0 3)))  ( =  in3 ( *  in0 4)))  ( =  in4 ( *  in0 5)))  ( =  in5 ( *  in0 6)))  ( =  in6 ( *  in0 7)))  ( =  in7 ( *  in0 8)))  ( =  in8 ( *  in0 9)))  ( =  in9 ( *  in0 10)))  ( =  in10 ( *  in0 11))))
 
 (check-sat)
 (get-model)

@@ -1,0 +1,1176 @@
+
+############################################################
+I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:
+
+The constraints for input (N=1):
+
+None
+
+
+The constraints for input (N=2):
+
+(assert  ( <  in0 in1))
+
+
+The constraints for input (N=3):
+
+(assert (and  ( <  in0 in1)  ( >  in1 in2)))
+
+
+The constraints for input (N=4):
+
+(assert (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3)))
+
+
+The constraints for input (N=5):
+
+(assert (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3))  ( >  in3 in4)))
+
+
+The constraints for input (N=6):
+
+(assert (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5)))
+
+
+The constraints for input (N=7):
+
+(assert (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5))  ( >  in5 in6)))
+
+
+The constraints for input (N=8):
+
+(assert (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7)))
+
+
+The constraints for input (N=9):
+
+(assert (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8)))
+
+
+The constraints for input (N=10):
+
+(assert (and (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( <  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8))  ( >  in8 in9)))
+
+
+Here is more context for you to generalize the constraints better. Below is the source code for the SPF problem:
+
+```java
+package own;
+
+import gov.nasa.jpf.symbc.Debug;
+
+public class ComplexMidPeak {
+
+    public static void algo(int[] a) {
+        boolean fail = false;
+        boolean skip = false;
+        final int N = a.length;
+        for (int i = 0; i < N-1; i++) {
+            if (i < Math.ceil(N/2)) {
+                if (a[i] < a[i+1]){
+                    // Skip
+                    skip = true;
+                } else {
+                    fail = true;
+                }
+            } else {
+                if (a[i] > a[i+1]){
+                    // Skip
+                    skip = true;
+                } else {
+                    fail = true;
+                }
+            }
+        }
+        if (!fail) {
+            int aa = 99999;
+            for (int i = 0; i < N; i++) {
+                aa = aa*aa;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        final int N = Integer.parseInt(args[0]);
+
+        int a[] = new int[N];
+        for (int i = 0; i < N; i++) {
+            a[i] = Debug.makeSymbolicInteger("in"+i);
+        }
+
+        // We only measure the complexity of this function itself.
+        algo(a);
+    }
+}
+
+```
+
+
+Generalize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.
+
+Use this code template to formally express the generalisation for N constraints:
+```python
+def generate_constraints(N):
+
+    # Do some logic here to return a SMT-LIB Format String e.g. (assert (and (op1 x y) (op2 x z)))
+
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)```
+
+Each inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).
+############################################################
+CASUAL:
+
+Looking at your constraints, it seems the core idea is to check if the list of inputs, `a`, is first increasing, up to a point (generally around halfway through the list), and then decreasing. This pattern divides the set of constraints into two parts. For the first half of the list, each number `a[i]` must be less than the next `a[i+1]`. Then, after the midpoint, `a[i]` must be greater than `a[i+1]`. This corresponds to the loop in the `algo` function where the half-way point (`Math.ceil(N/2)`) is the division between conditions.
+
+For example:
+- For `N = 3`, the list is `in0 < in1 > in2`, having a peak at `in1`.
+- For `N = 4`, it is `in0 < in1 < in2 > in3`, peaking at `in2`.
+- For `N = 5`, `in0 < in1 < in2 > in3 > in4`, peaking again at `in2`.
+
+Thus we observe that for `N` elements:
+1. The constraints must enforce increasing order for indexes before the middle (including half if odd) and,
+2. Decreasing order for indexes after, creating a single peak.
+
+The midpoint or strategy changes depending on whether `N` is even or odd but your constraints already capture that subtly by defining `(i < Math.ceil(N/2))`.
+
+I'll define a function in Python that will generate constraints to express this logic for any `N`.
+
+FORMAL:
+
+```python
+def generate_constraints(N):
+    constraints = []
+    
+    midpoint = (N + 1) // 2
+    for i in range(midpoint - 1):
+        constraints.append(f"( < in{i} in{i+1})")
+    
+    for i in range(midpoint - 1, N - 1):
+        constraints.append(f"( > in{i} in{i+1})")
+    
+    constraint_str = " (and ".join(constraints) + ")" * len(constraints)
+    
+    if constraints:
+        return f"(assert (and {constraint_str}))"
+    else:
+        return "None"
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+
+The function `generate_constraints` calculates the constraints for a given `N`, respecting the increasing then decreasing pattern around the midpoint, forming a peak that leads to the worst-case performance path based on your specifications.
+############################################################
+                     ATTEMPT 1
+############################################################
+                     Checking Equivalence for N=1
+Constraints are logically equivalent - both empty.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_2.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 13 column 27: invalid command, '(' expected")
+(error "line 22 column 1: invalid command, '(' expected")
+sat
+(error "line 28 column 27: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=2: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_3.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 14 column 46: invalid command, '(' expected")
+(error "line 23 column 1: invalid command, '(' expected")
+unsat
+(error "line 29 column 46: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_4.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 15 column 65: invalid command, '(' expected")
+(error "line 24 column 1: invalid command, '(' expected")
+sat
+(error "line 30 column 65: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=4: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_5.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 16 column 84: invalid command, '(' expected")
+(error "line 25 column 1: invalid command, '(' expected")
+unsat
+(error "line 31 column 84: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_6.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 17 column 103: invalid command, '(' expected")
+(error "line 26 column 1: invalid command, '(' expected")
+sat
+(error "line 32 column 103: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=6: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_7.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 18 column 122: invalid command, '(' expected")
+(error "line 27 column 1: invalid command, '(' expected")
+unsat
+(error "line 33 column 122: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_8.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 19 column 141: invalid command, '(' expected")
+(error "line 28 column 1: invalid command, '(' expected")
+sat
+(error "line 34 column 141: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=8: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_9.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 20 column 160: invalid command, '(' expected")
+(error "line 29 column 1: invalid command, '(' expected")
+unsat
+(error "line 35 column 160: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_10.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 21 column 179: invalid command, '(' expected")
+(error "line 30 column 1: invalid command, '(' expected")
+sat
+(error "line 36 column 179: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=10: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_11.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 22 column 199: invalid command, '(' expected")
+(error "line 31 column 1: invalid command, '(' expected")
+unsat
+(error "line 37 column 199: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_12.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 23 column 220: invalid command, '(' expected")
+(error "line 32 column 1: invalid command, '(' expected")
+sat
+(error "line 38 column 220: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=12: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_13.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 24 column 241: invalid command, '(' expected")
+(error "line 33 column 1: invalid command, '(' expected")
+unsat
+(error "line 39 column 241: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_14.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 25 column 262: invalid command, '(' expected")
+(error "line 34 column 1: invalid command, '(' expected")
+sat
+(error "line 40 column 262: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=14: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_15.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 26 column 283: invalid command, '(' expected")
+(error "line 35 column 1: invalid command, '(' expected")
+unsat
+(error "line 41 column 283: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_16.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 27 column 304: invalid command, '(' expected")
+(error "line 36 column 1: invalid command, '(' expected")
+sat
+(error "line 42 column 304: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=16: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_17.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 28 column 325: invalid command, '(' expected")
+(error "line 37 column 1: invalid command, '(' expected")
+unsat
+(error "line 43 column 325: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_18.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 29 column 346: invalid command, '(' expected")
+(error "line 38 column 1: invalid command, '(' expected")
+sat
+(error "line 44 column 346: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=18: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_19.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 30 column 367: invalid command, '(' expected")
+(error "line 39 column 1: invalid command, '(' expected")
+unsat
+(error "line 45 column 367: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_20.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 31 column 388: invalid command, '(' expected")
+(error "line 40 column 1: invalid command, '(' expected")
+sat
+(error "line 46 column 388: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=20: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_21.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 32 column 409: invalid command, '(' expected")
+(error "line 41 column 1: invalid command, '(' expected")
+unsat
+(error "line 47 column 409: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_22.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 33 column 430: invalid command, '(' expected")
+(error "line 42 column 1: invalid command, '(' expected")
+sat
+(error "line 48 column 430: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=22: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_23.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 34 column 451: invalid command, '(' expected")
+(error "line 43 column 1: invalid command, '(' expected")
+unsat
+(error "line 49 column 451: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_24.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 35 column 472: invalid command, '(' expected")
+(error "line 44 column 1: invalid command, '(' expected")
+sat
+(error "line 50 column 472: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=24: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_25.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 36 column 493: invalid command, '(' expected")
+(error "line 45 column 1: invalid command, '(' expected")
+unsat
+(error "line 51 column 493: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_26.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 37 column 514: invalid command, '(' expected")
+(error "line 46 column 1: invalid command, '(' expected")
+sat
+(error "line 52 column 514: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=26: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_27.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 38 column 535: invalid command, '(' expected")
+(error "line 47 column 1: invalid command, '(' expected")
+unsat
+(error "line 53 column 535: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_28.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 39 column 556: invalid command, '(' expected")
+(error "line 48 column 1: invalid command, '(' expected")
+sat
+(error "line 54 column 556: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=28: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_29.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 40 column 577: invalid command, '(' expected")
+(error "line 49 column 1: invalid command, '(' expected")
+unsat
+(error "line 55 column 577: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_30.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 41 column 598: invalid command, '(' expected")
+(error "line 50 column 1: invalid command, '(' expected")
+sat
+(error "line 56 column 598: invalid command, '(' expected")
+sat
+
+Original does not imply generated. Not equivalent.
+
+                    N=30: Not Equivalent
+
+#################### Retrying Generalisation ####################
+
+############################################################
+The generalization is not correct. Remember to always structure your reply with the same headings. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'. Remember to use SMT-LIB format for the constraints and output a valid python program.
+
+For N=1: the generalisation is correct.
+
+
+For N=2: The correct constraints are:
+
+(assert  ( <  in0 in1))
+
+Your generalisation implies the set:
+
+(assert (and ( > in0 in1))))
+
+
+This is not correct. 
+
+
+For N=3: the generalisation is correct.
+
+
+For N=4: The correct constraints are:
+
+(assert (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( > in1 in2) (and ( > in2 in3))))))
+
+
+This is not correct. 
+
+
+For N=5: the generalisation is correct.
+
+
+For N=6: The correct constraints are:
+
+(assert (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( > in2 in3) (and ( > in3 in4) (and ( > in4 in5))))))))
+
+
+This is not correct. 
+
+
+For N=7: the generalisation is correct.
+
+
+For N=8: The correct constraints are:
+
+(assert (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( > in3 in4) (and ( > in4 in5) (and ( > in5 in6) (and ( > in6 in7))))))))))
+
+
+This is not correct. 
+
+
+For N=9: the generalisation is correct.
+
+
+For N=10: The correct constraints are:
+
+(assert (and (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( <  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8))  ( >  in8 in9)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( < in3 in4) (and ( > in4 in5) (and ( > in5 in6) (and ( > in6 in7) (and ( > in7 in8) (and ( > in8 in9))))))))))))
+
+
+This is not correct. 
+
+############################################################
+CASUAL:
+
+Ah, I see where the misunderstanding happened. Based on your problem description and the constraints outlined, we need to structure the constraints such that for the first part of the list (up to `floor(N/2)`), each element must be less than its successor, and for the second part (from `ceil(N/2)` onwards), each element must be greater than its successor. What seemed inconsistent previously might be attributed to the incorrect cutoff point. The midpoint needs to create the peak, so strictly increasing pairs should continue till just before halfway point, and strictly decreasing pairs should start right after it.
+
+To ensure the pattern is maintained correctly, let's correct the strategy:
+
+1. For all `i` in the range 0 to `floor(N/2) - 1`, `in[i] < in[i+1]`.
+2. For all `i` beyond `floor(N/2)`, `in[i] > in[i+1]`.
+
+This adjustment should address the inconsistencies previously noted when the midpoint wasn't calculated correctly. Let's structure this into a formal solution.
+
+FORMAL:
+
+```python
+def generate_constraints(N):
+    if N == 1:
+        return "None"
+    
+    constraints = []
+    midpoint = (N // 2)
+    
+    # Increasing sequence
+    for i in range(midpoint):
+        constraints.append(f"( < in{i} in{i+1})")
+
+    # Decreasing sequence
+    for i in range(midpoint, N - 1):
+        constraints.append(f"( > in{i} in{i+1})")
+    
+    if constraints:
+        constraint_str = " (and ".join(constraints) + ")" * len(constraints)
+    else:
+        constraint_str = ""
+        
+    return f"(assert (and {constraint_str}))"
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+
+This logic now reassesses the switching point in constraints to ensure proper formation of the peak meeting the conditions you've outlined. This should align with the given outputs precisely for varying `N`.
+############################################################
+                     ATTEMPT 2
+############################################################
+                     Checking Equivalence for N=1
+Constraints are logically equivalent - both empty.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_2.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 13 column 27: invalid command, '(' expected")
+(error "line 22 column 1: invalid command, '(' expected")
+unsat
+(error "line 28 column 27: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_3.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 14 column 46: invalid command, '(' expected")
+(error "line 23 column 1: invalid command, '(' expected")
+unsat
+(error "line 29 column 46: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_4.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 15 column 65: invalid command, '(' expected")
+(error "line 24 column 1: invalid command, '(' expected")
+unsat
+(error "line 30 column 65: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=4: Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_5.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 16 column 84: invalid command, '(' expected")
+(error "line 25 column 1: invalid command, '(' expected")
+unsat
+(error "line 31 column 84: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_6.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 17 column 103: invalid command, '(' expected")
+(error "line 26 column 1: invalid command, '(' expected")
+unsat
+(error "line 32 column 103: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=6: Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_7.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 18 column 122: invalid command, '(' expected")
+(error "line 27 column 1: invalid command, '(' expected")
+unsat
+(error "line 33 column 122: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_8.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 19 column 141: invalid command, '(' expected")
+(error "line 28 column 1: invalid command, '(' expected")
+unsat
+(error "line 34 column 141: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=8: Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_9.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 20 column 160: invalid command, '(' expected")
+(error "line 29 column 1: invalid command, '(' expected")
+unsat
+(error "line 35 column 160: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_10.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 21 column 179: invalid command, '(' expected")
+(error "line 30 column 1: invalid command, '(' expected")
+unsat
+(error "line 36 column 179: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=10: Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_11.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 22 column 199: invalid command, '(' expected")
+(error "line 31 column 1: invalid command, '(' expected")
+unsat
+(error "line 37 column 199: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_12.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 23 column 220: invalid command, '(' expected")
+(error "line 32 column 1: invalid command, '(' expected")
+unsat
+(error "line 38 column 220: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=12: Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_13.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 24 column 241: invalid command, '(' expected")
+(error "line 33 column 1: invalid command, '(' expected")
+unsat
+(error "line 39 column 241: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_14.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 25 column 262: invalid command, '(' expected")
+(error "line 34 column 1: invalid command, '(' expected")
+unsat
+(error "line 40 column 262: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=14: Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_15.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 26 column 283: invalid command, '(' expected")
+(error "line 35 column 1: invalid command, '(' expected")
+unsat
+(error "line 41 column 283: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_16.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 27 column 304: invalid command, '(' expected")
+(error "line 36 column 1: invalid command, '(' expected")
+unsat
+(error "line 42 column 304: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=16: Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_17.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 28 column 325: invalid command, '(' expected")
+(error "line 37 column 1: invalid command, '(' expected")
+unsat
+(error "line 43 column 325: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_18.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 29 column 346: invalid command, '(' expected")
+(error "line 38 column 1: invalid command, '(' expected")
+unsat
+(error "line 44 column 346: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=18: Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_19.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 30 column 367: invalid command, '(' expected")
+(error "line 39 column 1: invalid command, '(' expected")
+unsat
+(error "line 45 column 367: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_20.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 31 column 388: invalid command, '(' expected")
+(error "line 40 column 1: invalid command, '(' expected")
+unsat
+(error "line 46 column 388: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=20: Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_21.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 32 column 409: invalid command, '(' expected")
+(error "line 41 column 1: invalid command, '(' expected")
+unsat
+(error "line 47 column 409: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_22.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 33 column 430: invalid command, '(' expected")
+(error "line 42 column 1: invalid command, '(' expected")
+unsat
+(error "line 48 column 430: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=22: Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_23.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 34 column 451: invalid command, '(' expected")
+(error "line 43 column 1: invalid command, '(' expected")
+unsat
+(error "line 49 column 451: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_24.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 35 column 472: invalid command, '(' expected")
+(error "line 44 column 1: invalid command, '(' expected")
+unsat
+(error "line 50 column 472: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=24: Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_25.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 36 column 493: invalid command, '(' expected")
+(error "line 45 column 1: invalid command, '(' expected")
+unsat
+(error "line 51 column 493: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_26.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 37 column 514: invalid command, '(' expected")
+(error "line 46 column 1: invalid command, '(' expected")
+unsat
+(error "line 52 column 514: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=26: Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_27.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 38 column 535: invalid command, '(' expected")
+(error "line 47 column 1: invalid command, '(' expected")
+unsat
+(error "line 53 column 535: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_28.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 39 column 556: invalid command, '(' expected")
+(error "line 48 column 1: invalid command, '(' expected")
+unsat
+(error "line 54 column 556: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=28: Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_29.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 40 column 577: invalid command, '(' expected")
+(error "line 49 column 1: invalid command, '(' expected")
+unsat
+(error "line 55 column 577: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4o/generals/ComplexMidPeak/ComplexMidPeak_30.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 41 column 598: invalid command, '(' expected")
+(error "line 50 column 1: invalid command, '(' expected")
+unsat
+(error "line 56 column 598: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=30: Equivalent
+
+Generalization verified successfully for all examples.

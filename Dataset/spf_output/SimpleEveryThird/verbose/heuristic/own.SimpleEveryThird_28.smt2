@@ -8,7 +8,7 @@
 (declare-const in18 Int)
 (declare-const in3 Int)
 
-(assert (and (and (and (and (and (and (and (and  ( ==  in3 0)  ( ==  in6 0))  ( ==  in9 0))  ( ==  in12 0))  ( ==  in15 0))  ( ==  in18 0))  ( ==  in21 0))  ( ==  in24 0))  ( ==  in27 0)))
+(assert (and (and (and (and (and (and (and (and  ( =  in3 0)  ( =  in6 0))  ( =  in9 0))  ( =  in12 0))  ( =  in15 0))  ( =  in18 0))  ( =  in21 0))  ( =  in24 0))  ( =  in27 0)))
 
 (check-sat)
 (get-model)

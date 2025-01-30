@@ -3,7 +3,7 @@
 (declare-const in1 Int)
 (declare-const in3 Int)
 
-(assert (and (and (and  ( ==  in0 120)  ( ==  in1 120))  ( ==  in2 120))  ( ==  in3 120)))
+(assert (and (and (and  ( =  in0 120)  ( =  in1 120))  ( =  in2 120))  ( =  in3 120)))
 
 (check-sat)
 (get-model)

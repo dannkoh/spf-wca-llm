@@ -24,7 +24,7 @@
 (declare-const in19 Int)
 (declare-const in18 Int)
 
-(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( ==  in0 in1)  ( ==  in1 in2))  ( ==  in2 in3))  ( ==  in3 in4))  ( ==  in4 in5))  ( ==  in5 in6))  ( ==  in6 in7))  ( ==  in7 in8))  ( ==  in8 in9))  ( ==  in9 in10))  ( ==  in10 in11))  ( ==  in11 in12))  ( <  in12 in13))  ( <  in13 in14))  ( <  in14 in15))  ( <  in15 in16))  ( <  in16 in17))  ( <  in17 in18))  ( <  in18 in19))  ( <  in19 in20))  ( <  in20 in21))  ( <  in21 in22))  ( <  in22 in23))  ( <  in23 in24)))
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  in0 in1)  ( =  in1 in2))  ( =  in2 in3))  ( =  in3 in4))  ( =  in4 in5))  ( =  in5 in6))  ( =  in6 in7))  ( =  in7 in8))  ( =  in8 in9))  ( =  in9 in10))  ( =  in10 in11))  ( =  in11 in12))  ( <  in12 in13))  ( <  in13 in14))  ( <  in14 in15))  ( <  in15 in16))  ( <  in16 in17))  ( <  in17 in18))  ( <  in18 in19))  ( <  in19 in20))  ( <  in20 in21))  ( <  in21 in22))  ( <  in22 in23))  ( <  in23 in24)))
 
 (check-sat)
 (get-model)

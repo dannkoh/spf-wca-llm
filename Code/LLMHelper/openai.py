@@ -1,8 +1,7 @@
 import openai
 import time
-from LLMHelper.base import BaseLLMHelper
+from LLMHelper.base import BaseLLMHelper, ResponseLLMHelper
 from tqdm import tqdm
-import sys
 
 class OpenAIHelper(BaseLLMHelper):
     """
@@ -38,51 +37,70 @@ class OpenAIHelper(BaseLLMHelper):
 
 
     def __init__(self, api_key, model):
-        """
-        Initialize the LLMHelper with the given API key and model.
-
-        Args:
-            api_key (str): The OpenAI API key.
-            model (str): The name of the OpenAI model to use.
-        """
+        """...existing code..."""
         openai.api_key = api_key
         self.model = model
+        self.reduction_sizes = [4, 3, 2, 1]
 
-    def get_response(self, history, model=None):
+    def _reduce_context(self, history, reduction_index):
         """
-        Get a response from the OpenAI API based on the provided history and prompt.
-
+        Reduce the context size while maintaining the system prompt.
+        
         Args:
-            history (list): The chat history for context.
-            prompt (str): The prompt to send to the model.
-            model (str, optional): The model to use. Defaults to self.model.
-
+            history (list): Current conversation history
+            reduction_index (int): Index in reduction_sizes array
+            
         Returns:
-            dict or int: The response from the API, or an error code.
+            tuple: (reduced_history, next_reduction_index, success)
         """
+        if reduction_index >= len(self.reduction_sizes):
+            return history, reduction_index, False
+            
+        if len(history) <= 2:  # System prompt + 1 message
+            return history, reduction_index, False
+            
+        current_size = self.reduction_sizes[reduction_index]
+        reduced_history = [history[0]] + history[-current_size:]  # System prompt + last N messages
+        return reduced_history, reduction_index + 1, True
+
+    def get_response(self, history, model=None, wait_time=60):
+        """...existing code..."""
         if model is None:
             model = self.model
 
         done_it = False
         limit = 12
+        reduction_index = 0
+        current_history = history.copy()
+        
         while not done_it and limit != 0:
             try:
                 time.sleep(1)
                 response = openai.chat.completions.create(
                     model=model,
-                    messages=history,
+                    messages=current_history,
                 )
                 done_it = True
                 return response
             except openai.BadRequestError as e:
                 if "maximum context length" in str(e):
-                    # Try to reduce context by keeping only the last few messages
-                    if len(history) > 4:  # Keep system prompt + last few exchanges
-                        history = [history[0]] + history[-3:]  # System prompt + last 3 messages
-                        continue
-                    return {"choices": [{"message": {"content": "Error: Context too long even after reduction"}}]}
+                    print("############################Context too long, reducing context############################")
+                    current_history, reduction_index, success = self._reduce_context(current_history, reduction_index)
+                    if not success:
+                        return ResponseLLMHelper.build_obj("Error: Context too long even after trying all reductions")
+                    limit -= 1
+                    continue
+                return ResponseLLMHelper.build_obj("Error: " + str(e))
             except openai.RateLimitError as e:
-                wait_time = 60
+                error_msg = str(e)
+                if "tokens" in error_msg and "must be reduced" in error_msg:
+                    print("############################Token limit exceeded, reducing context############################")
+                    current_history, reduction_index, success = self._reduce_context(current_history, reduction_index)
+                    if not success:
+                        return ResponseLLMHelper.build_obj("Error: Context too long even after trying all reductions")
+                    limit -= 1
+                    continue
+                
                 print(f"Rate limit exceeded, waiting {wait_time} seconds")
                 print(e)
                 limit -= 1
@@ -92,5 +110,5 @@ class OpenAIHelper(BaseLLMHelper):
                 continue
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
-                return {"choices": [{"message": {"content": f"Error: {str(e)}"}}]}
-        return {"choices": [{"message": {"content": "Error: Max retries exceeded"}}]}
+                return ResponseLLMHelper.build_obj(f"Error: {str(e)}")
+        return ResponseLLMHelper.build_obj("Error: Max retries exceeded")

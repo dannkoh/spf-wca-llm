@@ -19,7 +19,7 @@
 (declare-const put8_0 Int)
 (declare-const put7_1 Int)
 
-(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( ==  0 ( %  ( +  put0_1 put0_0) 9))  ( ==  0 ( %  ( +  put1_1 put1_0) 9)))  ( ==  0 ( %  ( +  put2_1 put2_0) 9)))  ( ==  0 ( %  ( +  put3_1 put3_0) 9)))  ( ==  0 ( %  ( +  put4_1 put4_0) 9)))  ( ==  0 ( %  ( +  put5_1 put5_0) 9)))  ( ==  0 ( %  ( +  put6_1 put6_0) 9)))  ( ==  0 ( %  ( +  put7_1 put7_0) 9)))  ( ==  0 ( %  ( +  put8_1 put8_0) 9)))  ( ==  0 ( %  ( +  get1 get0) 9))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))) (not ( = put6_0 get0))) (not ( = put7_0 get0))) (not ( = put8_0 get0))))
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 9))  ( =  0 ( mod  ( +  put1_1 put1_0) 9)))  ( =  0 ( mod  ( +  put2_1 put2_0) 9)))  ( =  0 ( mod  ( +  put3_1 put3_0) 9)))  ( =  0 ( mod  ( +  put4_1 put4_0) 9)))  ( =  0 ( mod  ( +  put5_1 put5_0) 9)))  ( =  0 ( mod  ( +  put6_1 put6_0) 9)))  ( =  0 ( mod  ( +  put7_1 put7_0) 9)))  ( =  0 ( mod  ( +  put8_1 put8_0) 9)))  ( =  0 ( mod  ( +  get1 get0) 9))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))) (not ( = put6_0 get0))) (not ( = put7_0 get0))) (not ( = put8_0 get0))))
 
 (check-sat)
 (get-model)

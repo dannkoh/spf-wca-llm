@@ -12,7 +12,7 @@
 (declare-const in9 Int)
 (declare-const in12 Int)
 
-(assert (and (and (and (and (and (and (and (and (and (and  ( ==  ( -  in2 in1) ( -  in1 in0))  ( ==  ( -  in3 in2) ( -  in2 in1)))  ( ==  ( -  in4 in3) ( -  in3 in2)))  ( ==  ( -  in5 in4) ( -  in4 in3)))  ( ==  ( -  in6 in5) ( -  in5 in4)))  ( ==  ( -  in7 in6) ( -  in6 in5)))  ( ==  ( -  in8 in7) ( -  in7 in6)))  ( ==  ( -  in9 in8) ( -  in8 in7)))  ( ==  ( -  in10 in9) ( -  in9 in8)))  ( ==  ( -  in11 in10) ( -  in10 in9)))  ( ==  ( -  in12 in11) ( -  in11 in10))))
+(assert (and (and (and (and (and (and (and (and (and (and  ( =  ( -  in2 in1) ( -  in1 in0))  ( =  ( -  in3 in2) ( -  in2 in1)))  ( =  ( -  in4 in3) ( -  in3 in2)))  ( =  ( -  in5 in4) ( -  in4 in3)))  ( =  ( -  in6 in5) ( -  in5 in4)))  ( =  ( -  in7 in6) ( -  in6 in5)))  ( =  ( -  in8 in7) ( -  in7 in6)))  ( =  ( -  in9 in8) ( -  in8 in7)))  ( =  ( -  in10 in9) ( -  in9 in8)))  ( =  ( -  in11 in10) ( -  in10 in9)))  ( =  ( -  in12 in11) ( -  in11 in10))))
 
 (check-sat)
 (get-model)
