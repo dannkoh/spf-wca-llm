@@ -35,6 +35,7 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
             "text-generation",
             model=model,
             tokenizer=tokenizer,
+            max_new_tokens=1024,
         )
         self.system_prompt = {}
 
