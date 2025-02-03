@@ -36,7 +36,7 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
             model=model,
             tokenizer=tokenizer,
         )
-        self.system_promt = {}
+        self.system_prompt = {}
 
         self.max_context_length = 16_000
         self.reduction_sizes = [8, 6, 4, 3, 2, 1]
