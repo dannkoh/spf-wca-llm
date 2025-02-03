@@ -1,30 +1,42 @@
 import transformers
 from LLMHelper.base import ResponseLLMHelper
 from LLMHelper.huggingface import BaseHuggingFaceModel, HuggingFaceModelFactory
-
+import torch
+import os
 from typing import List, Dict, Any
 
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
-class microsoftPhi4(BaseHuggingFaceModel):
+
+class microsoftPhi3_5(BaseHuggingFaceModel):
 
     def __init__(self, token: str):
         super().__init__("microsoft/phi-4", token)
 
     def _setup_model(self) -> None:
         """
-        Setup the Phi-4 model from Microsoft.
+        Setup the Phi-3.5-mini-instruct model from Microsoft.
         """
-        self.pipeline = transformers.pipeline(
-            "text-generation",
-            model="microsoft/phi-4",
+        tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
+        quantization_config = transformers.BitsAndBytesConfig(
+            load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        )
+        model = transformers.AutoModelForCausalLM.from_pretrained(
+            self.model_name,
+            quantization_config=quantization_config,
             trust_remote_code=True,
-            model_kwargs={"torch_dtype": "auto"},
+            torch_dtype=torch.float16,
             device_map="auto",
         )
-        self.system_promt = {
-            "role": "system",
-            "content": "You are a mathematical expert trying to generalise constraints from SMT solvers.",
-        }
+        self.pipeline = transformers.pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=tokenizer,
+        )
+        self.system_promt = {}
 
         self.max_context_length = 16_000
         self.reduction_sizes = [8, 6, 4, 3, 2, 1]
@@ -98,4 +110,4 @@ class microsoftPhi4(BaseHuggingFaceModel):
 
 
 # Register the model with the factory
-HuggingFaceModelFactory.register("microsoft/phi-4", microsoftPhi4)
+HuggingFaceModelFactory.register("microsoft/Phi-3.5-mini-instruct", microsoftPhi3_5)
