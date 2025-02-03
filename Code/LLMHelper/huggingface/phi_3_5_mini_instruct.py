@@ -79,7 +79,7 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
         """
         limit = 12
         reduction_index = 0
-        current_history = [self.system_prompt] + history
+        current_history = history.copy()
 
         while limit > 0:
             try:
