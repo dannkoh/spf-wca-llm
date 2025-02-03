@@ -70,9 +70,28 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
 
     def _process_response(self, response: Any) -> str:
         try:
-            return ResponseLLMHelper.build_obj(response[0]["generated_text"].split("Assistant:")[-1].strip())
-        except Exception:
-            return ResponseLLMHelper.build_obj(content_str=response)
+            if isinstance(response, str):
+                return ResponseLLMHelper.build_obj(response)
+                
+            if isinstance(response, list) and 'generated_text' in response[0]:
+                messages = response[0]['generated_text']
+                if isinstance(messages, list):
+                    # Find assistant message
+                    for msg in messages:
+                        if msg.get('role') == 'assistant':
+                            return ResponseLLMHelper.build_obj(msg.get('content', ''))
+                    # Fallback if no assistant message found
+                    return ResponseLLMHelper.build_obj("No assistant response found")
+                
+            # Handle direct text response
+            generated_text = response[0]['generated_text']
+            if isinstance(generated_text, str):
+                return ResponseLLMHelper.build_obj(generated_text.split("Assistant:")[-1].strip())
+                
+            return ResponseLLMHelper.build_obj("Error: Unexpected response format")
+                
+        except Exception as e:
+            return ResponseLLMHelper.build_obj(f"Error processing response: {str(e)}")
 
     def get_response(self, history: List[Dict[str, str]], **kwargs) -> Dict[str, str]:
         """
