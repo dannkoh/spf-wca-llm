@@ -109,10 +109,13 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
             except Exception as e:
                 error_msg = str(e)
                 if (
-                    "maximum context length" in error_msg
-                    or "exceeds max tokens" in error_msg
+                    "CUDA out of memory" in error_msg or
+                    "maximum context length" in error_msg or
+                    "exceeds max tokens" in error_msg
                 ):
                     print("Context too long, reducing conversation history...")
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
                     current_history, reduction_index, success = self._reduce_context(
                         current_history, reduction_index
                     )
