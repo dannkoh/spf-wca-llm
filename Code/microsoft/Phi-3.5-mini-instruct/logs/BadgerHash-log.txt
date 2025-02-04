@@ -1,0 +1,573 @@
+
+############################################################
+I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:
+
+The constraints for input (N=1):
+
+(assert (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 1))  ( =  0 ( mod  ( +  get1 get0) 1))) (not ( = put0_0 get0))))
+
+
+The constraints for input (N=2):
+
+(assert (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 2))  ( =  0 ( mod  ( +  put1_1 put1_0) 2)))  ( =  0 ( mod  ( +  get1 get0) 2))) (not ( = put0_0 get0))) (not ( = put1_0 get0))))
+
+
+The constraints for input (N=3):
+
+(assert (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 3))  ( =  0 ( mod  ( +  put1_1 put1_0) 3)))  ( =  0 ( mod  ( +  put2_1 put2_0) 3)))  ( =  0 ( mod  ( +  get1 get0) 3))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))))
+
+
+The constraints for input (N=4):
+
+(assert (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 4))  ( =  0 ( mod  ( +  put1_1 put1_0) 4)))  ( =  0 ( mod  ( +  put2_1 put2_0) 4)))  ( =  0 ( mod  ( +  put3_1 put3_0) 4)))  ( =  0 ( mod  ( +  get1 get0) 4))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))))
+
+
+The constraints for input (N=5):
+
+(assert (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 5))  ( =  0 ( mod  ( +  put1_1 put1_0) 5)))  ( =  0 ( mod  ( +  put2_1 put2_0) 5)))  ( =  0 ( mod  ( +  put3_1 put3_0) 5)))  ( =  0 ( mod  ( +  put4_1 put4_0) 5)))  ( =  0 ( mod  ( +  get1 get0) 5))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))))
+
+
+The constraints for input (N=6):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 6))  ( =  0 ( mod  ( +  put1_1 put1_0) 6)))  ( =  0 ( mod  ( +  put2_1 put2_0) 6)))  ( =  0 ( mod  ( +  put3_1 put3_0) 6)))  ( =  0 ( mod  ( +  put4_1 put4_0) 6)))  ( =  0 ( mod  ( +  put5_1 put5_0) 6)))  ( =  0 ( mod  ( +  get1 get0) 6))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))))
+
+
+The constraints for input (N=7):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 7))  ( =  0 ( mod  ( +  put1_1 put1_0) 7)))  ( =  0 ( mod  ( +  put2_1 put2_0) 7)))  ( =  0 ( mod  ( +  put3_1 put3_0) 7)))  ( =  0 ( mod  ( +  put4_1 put4_0) 7)))  ( =  0 ( mod  ( +  put5_1 put5_0) 7)))  ( =  0 ( mod  ( +  put6_1 put6_0) 7)))  ( =  0 ( mod  ( +  get1 get0) 7))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))) (not ( = put6_0 get0))))
+
+
+The constraints for input (N=8):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 8))  ( =  0 ( mod  ( +  put1_1 put1_0) 8)))  ( =  0 ( mod  ( +  put2_1 put2_0) 8)))  ( =  0 ( mod  ( +  put3_1 put3_0) 8)))  ( =  0 ( mod  ( +  put4_1 put4_0) 8)))  ( =  0 ( mod  ( +  put5_1 put5_0) 8)))  ( =  0 ( mod  ( +  put6_1 put6_0) 8)))  ( =  0 ( mod  ( +  put7_1 put7_0) 8)))  ( =  0 ( mod  ( +  get1 get0) 8))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))) (not ( = put6_0 get0))) (not ( = put7_0 get0))))
+
+
+The constraints for input (N=9):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 9))  ( =  0 ( mod  ( +  put1_1 put1_0) 9)))  ( =  0 ( mod  ( +  put2_1 put2_0) 9)))  ( =  0 ( mod  ( +  put3_1 put3_0) 9)))  ( =  0 ( mod  ( +  put4_1 put4_0) 9)))  ( =  0 ( mod  ( +  put5_1 put5_0) 9)))  ( =  0 ( mod  ( +  put6_1 put6_0) 9)))  ( =  0 ( mod  ( +  put7_1 put7_0) 9)))  ( =  0 ( mod  ( +  put8_1 put8_0) 9)))  ( =  0 ( mod  ( +  get1 get0) 9))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))) (not ( = put6_0 get0))) (not ( = put7_0 get0))) (not ( = put8_0 get0))))
+
+
+The constraints for input (N=10):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( =  0 ( mod  ( +  put0_1 put0_0) 10))  ( =  0 ( mod  ( +  put1_1 put1_0) 10)))  ( =  0 ( mod  ( +  put2_1 put2_0) 10)))  ( =  0 ( mod  ( +  put3_1 put3_0) 10)))  ( =  0 ( mod  ( +  put4_1 put4_0) 10)))  ( =  0 ( mod  ( +  put5_1 put5_0) 10)))  ( =  0 ( mod  ( +  put6_1 put6_0) 10)))  ( =  0 ( mod  ( +  put7_1 put7_0) 10)))  ( =  0 ( mod  ( +  put8_1 put8_0) 10)))  ( =  0 ( mod  ( +  put9_1 put9_0) 10)))  ( =  0 ( mod  ( +  get1 get0) 10))) (not ( = put0_0 get0))) (not ( = put1_0 get0))) (not ( = put2_0 get0))) (not ( = put3_0 get0))) (not ( = put4_0 get0))) (not ( = put5_0 get0))) (not ( = put6_0 get0))) (not ( = put7_0 get0))) (not ( = put8_0 get0))) (not ( = put9_0 get0))))
+
+
+Here is more context for you to generalize the constraints better. Below is the source code for the SPF problem:
+
+```java
+package own;
+
+import gov.nasa.jpf.symbc.Debug;
+
+import java.util.Arrays;
+
+class HashTable {
+    private int size;
+    private Entry[] table;
+
+    public HashTable(int size) {
+        this.size = size;
+        this.table = new Entry[size];
+    }
+
+    private int hash(char[] key) {
+        int hash = 0;
+        for (char c : key) {
+            hash += c;
+        }
+        return hash % size;
+    }
+
+    public void put(char[] key, String value) {
+        int index = hash(key);
+        Entry entry = new Entry(key, value);
+
+        if (table[index] == null) {
+            table[index] = entry;
+        } else {
+            Entry current = table[index];
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = entry;
+        }
+    }
+
+    public String get(char[] key) {
+        int index = hash(key);
+        Entry current = table[index];
+
+        while (current != null) {
+            if (Arrays.equals(current.key, key)) {
+                return current.value;
+            }
+            current = current.next;
+        }
+
+        return null;
+    }
+
+    private static class Entry {
+        char[] key;
+        String value;
+        Entry next;
+
+        Entry(char[] key, String value) {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+        }
+    }
+}
+
+public class BadgerHash {
+    public static void main(String[] args) {
+        final int N = Integer.parseInt(args[0]);
+
+        int table_size = N;
+        int key_amount = N;
+        int key_length = 2;
+
+        HashTable hashTable = new HashTable(table_size);
+
+        for (int i=0;i<key_amount;i++){
+            char[] key = new char[key_length];
+            for (int j=0;j<key_length;j++)
+                key[j]=Debug.makeSymbolicChar("put"+i+"_"+j);
+            hashTable.put(key, "value");
+        }
+
+        char[] key = new char[key_length];
+        for (int j=0;j<key_length;j++)
+            key[j]=Debug.makeSymbolicChar("get"+j);
+        hashTable.get(key);
+        
+    }
+}
+
+```
+
+
+Generalize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.
+
+Use this code template to formally express the generalisation for N constraints:
+```python
+def generate_constraints(N):
+
+    # Do some logic here to return a SMT-LIB Format String e.g. (assert (and (op1 x y) (op2 x z)))
+
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)```
+
+Each inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).
+############################################################
+### CASUAL
+
+Alright, let's break this down. You've got a Java program that uses a hash table to store and retrieve values based on keys. The keys are symbolic, meaning they can represent any possible input. The constraints you've provided are ensuring that the hash table behaves in a specific way for different input sizes \( N \).
+
+Here's what's happening:
+
+1. **Hash Function**: The hash function sums up the ASCII values of the characters in the key and takes the modulus with the table size. This means the hash value is dependent on the sum of the key characters.
+
+2. **Constraints**:
+   - For each `put` operation, the sum of the two characters in the key must be divisible by the table size \( N \). This ensures that the key hashes to a specific index.
+   - For the `get` operation, the sum of its two characters must also be divisible by \( N \).
+   - The constraints `(not (= putX_0 get0))` ensure that the first character of each `put` key is different from the first character of the `get` key. This prevents a direct match in the hash table, which could lead to a trivial retrieval.
+
+3. **Generalization**:
+   - For any \( N \), you need to ensure that each `put` operation's key hashes to a valid index, and the `get` operation's key hashes to a potentially different index.
+   - The constraints should ensure that no `put` key's first character matches the `get` key's first character.
+
+### FORMAL
+
+```python
+def generate_constraints(N):
+    constraints = "(assert (and "
+    
+    # Constraints for each put operation
+    for i in range(N):
+        constraints += f" ( = 0 ( mod ( +  put{i}_1 put{i}_0) {N})) "
+    
+    # Constraint for the get operation
+    constraints += f" ( = 0 ( mod ( +  get1 get0) {N})) "
+    
+    # Constraints to ensure no put key's first character matches the get key's first character
+    for i in range(N):
+        constraints += f" (not ( = put{i}_0 get0)) "
+    
+    constraints += "))"
+    
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+
+This Python function generates the SMT-LIB constraints for any given \( N \). It ensures that each `put` operation's key hashes correctly and that the `get` operation's key is distinct in terms of its first character from all `put` keys.
+############################################################
+                     ATTEMPT 1
+############################################################
+                     Checking Equivalence for N=1
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_1.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_2.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_3.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_4.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=4: Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_5.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_6.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=6: Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_7.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_8.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=8: Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_9.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_10.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=10: Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_11.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_12.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=12: Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_13.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_14.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=14: Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_15.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_16.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=16: Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_17.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_18.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=18: Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_19.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_20.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=20: Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_21.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_22.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=22: Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_23.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_24.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=24: Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_25.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_26.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=26: Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_27.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_28.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=28: Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_29.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created microsoft/Phi-3.5-mini-instruct/generals/BadgerHash/BadgerHash_30.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=30: Equivalent
+
+Generalization verified successfully for all examples.
