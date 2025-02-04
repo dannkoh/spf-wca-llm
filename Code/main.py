@@ -2,6 +2,7 @@ import glob
 import json
 import os
 import subprocess
+import argparse
 
 from dotenv import load_dotenv
 from LLMHelper import huggingface, openai
@@ -33,11 +34,10 @@ class ConversationHandler:
         self.conversation.append("\n" + "#" * 60 + "\n")
         self.conversation.append(new_message)
 
-
     def load(self, message):
         """
         Add a message to the conversation into the conversation list.
-        
+
         Args:
             message (str): The message to add to the conversation.
         """
@@ -65,8 +65,16 @@ class Experiment:
     A class to run the experiment using provided directories and prompts.
     """
 
-    def __init__(self, directories, prompts, llm_helper, resultsFolder=None,
-                 max_examples=30, max_shown_examples=10, max_attempts=10):
+    def __init__(
+        self,
+        directories,
+        prompts,
+        llm_helper,
+        resultsFolder=None,
+        max_examples=30,
+        max_shown_examples=10,
+        max_attempts=10,
+    ):
         """
         Initialize the experiment with the given parameters.
 
@@ -83,14 +91,19 @@ class Experiment:
             raise ValueError("resultsFolder is required")
 
         # Create results directory structure
-        self.max_file_size = 2_000_000_000 # 2GB
+        self.max_file_size = 2_000_000_000  # 2GB
         self.results_dir = resultsFolder
         self.logs_dir = os.path.join(self.results_dir, "logs")
         self.stats_dir = os.path.join(self.results_dir, "stats")
         self.generals = os.path.join(self.results_dir, "generals")
 
         # Create necessary directories
-        for directory in [self.results_dir, self.logs_dir, self.stats_dir, self.generals]:
+        for directory in [
+            self.results_dir,
+            self.logs_dir,
+            self.stats_dir,
+            self.generals,
+        ]:
             os.makedirs(directory, exist_ok=True)
 
         self.directories = directories
@@ -100,6 +113,7 @@ class Experiment:
         self.max_shown_examples = max_shown_examples
         self.max_attempts = max_attempts
         self.experiment_stats = {}
+
     def run(self):
         """
         Run the experiment by processing each directory.
@@ -114,10 +128,16 @@ class Experiment:
         Args:
             directory_path (str): The path to the directory containing SMT files.
         """
-        problem_name = os.path.basename(os.path.dirname(os.path.dirname(directory_path)))
+        problem_name = os.path.basename(
+            os.path.dirname(os.path.dirname(directory_path))
+        )
         java_file_name = problem_name + ".java"
         source_filepath = os.path.join("../Dataset/java_programs/own/", java_file_name)
-        self.process_file(directory_path=directory_path, source_filepath=source_filepath, problem_name=problem_name)
+        self.process_file(
+            directory_path=directory_path,
+            source_filepath=source_filepath,
+            problem_name=problem_name,
+        )
 
     def process_file(self, directory_path, source_filepath, problem_name):
         """
@@ -137,7 +157,9 @@ class Experiment:
         source = self.get_source_file(filepath=source_filepath)
 
         # Generate initial prompt
-        prompt_get_gen = self.generate_initial_prompt(constraints=constraints, source_code=source)
+        prompt_get_gen = self.generate_initial_prompt(
+            constraints=constraints, source_code=source
+        )
         self.conversation_handler.print_and_save(prompt_get_gen)
 
         # Update conversation history
@@ -152,7 +174,9 @@ class Experiment:
         # Extract generalization
         generalisation = self.extract_generalisation(content_get_gen, llm_history)
         if generalisation is None:
-            self.conversation_handler.print_and_save(" " * 20 + "Failed to extract generalisation.")
+            self.conversation_handler.print_and_save(
+                " " * 20 + "Failed to extract generalisation."
+            )
             return  # Early exit if extraction fails
 
         # Evaluate and update generalization
@@ -161,7 +185,7 @@ class Experiment:
             generalisation=generalisation,
             llm_history=llm_history,
             directory_path=directory_path,
-            problem_name=problem_name
+            problem_name=problem_name,
         )
 
         self.update_individual_stats(
@@ -215,12 +239,14 @@ class Experiment:
             fileName = dir_path.rsplit("/", 1)[-1]
         smt_files = glob.glob(f"{dir_path}/own.{fileName}_*.smt2")
         for smt_file in smt_files:
-            n_str = smt_file.split(f"own.{fileName}_")[-1].split('.smt2')[0]
+            n_str = smt_file.split(f"own.{fileName}_")[-1].split(".smt2")[0]
             n = int(n_str)
-            with open(smt_file, 'r') as file:
+            with open(smt_file, "r") as file:
                 smt_lines = [line.strip() for line in file if line.strip()]
-                constants = [line for line in smt_lines if line.startswith('(declare-const')]
-                assertions = [line for line in smt_lines if line.startswith('(assert')]
+                constants = [
+                    line for line in smt_lines if line.startswith("(declare-const")
+                ]
+                assertions = [line for line in smt_lines if line.startswith("(assert")]
                 constraints[n] = {
                     "constants": constants,
                     "assertions": assertions,
@@ -228,10 +254,7 @@ class Experiment:
         # Ensure all indices up to max_examples are included
         for n in range(1, self.max_examples + 1):
             if n not in constraints:
-                constraints[n] = {
-                    "constants": [],
-                    "assertions": []
-                }
+                constraints[n] = {"constants": [], "assertions": []}
         return constraints
 
     def generate_initial_prompt(self, constraints, source_code):
@@ -250,8 +273,10 @@ class Experiment:
         for example_id in range(1, self.max_shown_examples + 1):
             constraint = constraints.get(example_id)
             prompt_get_gen += f"\n\nThe constraints for input (N={example_id}):\n"
-            assertions = constraint.get('assertions', [])
-            prompt_get_gen += f"\n{''.join(map(str, assertions))}\n" if assertions else "\nNone\n"
+            assertions = constraint.get("assertions", [])
+            prompt_get_gen += (
+                f"\n{''.join(map(str, assertions))}\n" if assertions else "\nNone\n"
+            )
 
         prompt_get_gen += "\n\nHere is more context for you to generalize the constraints better. Below is the source code for the SPF problem:\n"
         prompt_get_gen += source_code
@@ -268,24 +293,26 @@ class Experiment:
         """Check if generalization is valid and follows expected format."""
         try:
             # Create namespace with mocked input
-            namespace = {'input': lambda _: '1'}
-            
+            namespace = {"input": lambda _: "1"}
+
             # Compile and execute code
-            exec(compile(generalisation, '<string>', 'exec'), namespace)
-            
+            exec(compile(generalisation, "<string>", "exec"), namespace)
+
             # Check if function exists
-            if 'generate_constraints' not in namespace:
+            if "generate_constraints" not in namespace:
                 return False
-                
+
             # Test function call
-            result = namespace['generate_constraints'](1)
-            
+            result = namespace["generate_constraints"](1)
+
             # Verify return type and non-empty
             return isinstance(result, str) or result is None
         except Exception:
             return False
 
-    def extract_generalisation(self, content_get_gen, llm_history, depth=0, max_depth=3):
+    def extract_generalisation(
+        self, content_get_gen, llm_history, depth=0, max_depth=3
+    ):
         """
         Extract the generalization code from the LLM's response.
 
@@ -302,17 +329,26 @@ class Experiment:
             generalisation = content_get_gen.split("FORMAL", 1)[1].strip(":\n ")
             # Extract code block
             if "```python" in generalisation:
-                generalisation = generalisation.split("```python")[1].split("```")[0].strip()
+                generalisation = (
+                    generalisation.split("```python")[1].split("```")[0].strip()
+                )
             elif "```" in generalisation:
                 generalisation = generalisation.split("```")[1].split("```")[0].strip()
             else:
                 generalisation = generalisation.strip()
 
             # Ensure the code is properly formatted to accept N as a parameter
-            if "def generate_constraints(N):" not in generalisation or not Experiment.validPython(generalisation):
+            if (
+                "def generate_constraints(N):" not in generalisation
+                or not Experiment.validPython(generalisation)
+            ):
                 self.conversation_handler.load("Failed to extract generalisation.")
-                self.conversation_handler.load(f"def generate_constraints(N): found: {True if 'def generate_constraints(N):' in generalisation else False}")
-                self.conversation_handler.load(f"Valid Python: {Experiment.validPython(generalisation)}")
+                self.conversation_handler.load(
+                    f"def generate_constraints(N): found: {True if 'def generate_constraints(N):' in generalisation else False}"
+                )
+                self.conversation_handler.load(
+                    f"Valid Python: {Experiment.validPython(generalisation)}"
+                )
                 # Provide feedback to the LLM to correct the code format
                 correction_prompt = self.prompts["get_gen_format"]
                 correction_prompt += self.prompts["get_gen_end1"]
@@ -326,12 +362,16 @@ class Experiment:
                 content = response.choices[0].message.content
                 self.conversation_handler.print_and_save(content)
                 llm_history.append({"role": "assistant", "content": content})
-                return self.extract_generalisation(content, llm_history, depth=depth+1)
+                return self.extract_generalisation(
+                    content, llm_history, depth=depth + 1
+                )
             return generalisation
         else:
             return None
 
-    def evaluate_and_update_generalisation(self, constraints, generalisation, llm_history, directory_path, problem_name):
+    def evaluate_and_update_generalisation(
+        self, constraints, generalisation, llm_history, directory_path, problem_name
+    ):
         """
         Evaluate and update the generalization by checking logical equivalence.
 
@@ -343,38 +383,61 @@ class Experiment:
             problem_name (str): The name of the problem.
         """
         for attempt_id in range(self.max_attempts):
-            self.conversation_handler.print_and_save(f"{' ' * 20} ATTEMPT {attempt_id + 1}")
+            self.conversation_handler.print_and_save(
+                f"{' ' * 20} ATTEMPT {attempt_id + 1}"
+            )
 
             # Save the generalization code to a file
             generalisation_folder = os.path.join(self.generals, problem_name)
             os.makedirs(generalisation_folder, exist_ok=True)
-            generalisation_file = os.path.join(generalisation_folder, f"{problem_name}.py")
+            generalisation_file = os.path.join(
+                generalisation_folder, f"{problem_name}.py"
+            )
             with open(generalisation_file, "w") as file:
                 file.write(generalisation)
 
             success = {}
-            for N in range(1, self.max_examples+1):
+            for N in range(1, self.max_examples + 1):
                 # Paths to the original and instantiated constraint files
-                instantiated_constraints = self.instantiate_generalisation(generalisation_file, N)
+                instantiated_constraints = self.instantiate_generalisation(
+                    generalisation_file, N
+                )
                 if len(instantiated_constraints.encode("utf-8")) > self.max_file_size:
-                    self.conversation_handler.print_and_save(f"{' ' * 20}Constraints for N={N} too large (SIZE:{len(instantiated_constraints.encode('utf-8'))/1000000000}), aborting.")
+                    self.conversation_handler.print_and_save(
+                        f"{' ' * 20}Constraints for N={N} too large (SIZE:{len(instantiated_constraints.encode('utf-8'))/1000000000}), aborting."
+                    )
                     break
-                self.conversation_handler.print_and_save(f"{' ' * 20} Checking Equivalence for N={N}")
+                self.conversation_handler.print_and_save(
+                    f"{' ' * 20} Checking Equivalence for N={N}"
+                )
                 # Perform SMT equivalence checks
                 equivalent = self.check_logical_equivalence(
                     problem_name=problem_name,
                     N=N,
                     original_assertions=constraints[N],
-                    generated_assertions=instantiated_constraints
-                    )
-                self.conversation_handler.load(f"{' ' * 20}N={N}: {'Equivalent' if equivalent['result'] else 'Not Equivalent'}")
-                success[N] = {"expected": constraints[N], "predicted": instantiated_constraints, "equivalent": False if not equivalent["result"] else True, "reason": equivalent["reason"]}
+                    generated_assertions=instantiated_constraints,
+                )
+                self.conversation_handler.load(
+                    f"{' ' * 20}N={N}: {'Equivalent' if equivalent['result'] else 'Not Equivalent'}"
+                )
+                success[N] = {
+                    "expected": constraints[N],
+                    "predicted": instantiated_constraints,
+                    "equivalent": False if not equivalent["result"] else True,
+                    "reason": equivalent["reason"],
+                }
             if all(success[N]["equivalent"] for N in range(1, self.max_examples + 1)):
-                self.conversation_handler.load("Generalization verified successfully for all examples.")
+                self.conversation_handler.load(
+                    "Generalization verified successfully for all examples."
+                )
                 return success, attempt_id + 1
-            elif all(success[N]["equivalent"] for N in range(1, self.max_shown_examples + 1)):
+            elif all(
+                success[N]["equivalent"] for N in range(1, self.max_shown_examples + 1)
+            ):
                 # Add feedback about validation failure without revealing details
-                self.conversation_handler.load("Solution works for the training examples but fails to generalize properly.")
+                self.conversation_handler.load(
+                    "Solution works for the training examples but fails to generalize properly."
+                )
                 feedback_prompt = "Your generalization passed the initial examples but failed to scale to larger values of N. Please revise your solution to be more general."
                 self.conversation_handler.print_and_save(feedback_prompt)
                 llm_history.append({"role": "user", "content": feedback_prompt})
@@ -382,7 +445,9 @@ class Experiment:
                 self.conversation_handler.load("Failed to generalize constraints.")
                 return success, self.max_attempts
             else:
-                self.conversation_handler.load(f"{ '#' * 20 } Retrying Generalisation { '#' * 20 }")
+                self.conversation_handler.load(
+                    f"{ '#' * 20 } Retrying Generalisation { '#' * 20 }"
+                )
                 # Provide feedback to the LLM and get a new generalization
                 feedback_prompt = self.generate_feedback_prompt(results=success)
                 self.conversation_handler.print_and_save(feedback_prompt)
@@ -393,9 +458,13 @@ class Experiment:
                 self.conversation_handler.print_and_save(content_get_gen)
                 llm_history.append({"role": "assistant", "content": content_get_gen})
 
-                generalisation = self.extract_generalisation(content_get_gen, llm_history)
+                generalisation = self.extract_generalisation(
+                    content_get_gen, llm_history
+                )
                 if generalisation is None:
-                    self.conversation_handler.print_and_save("Failed to extract generalisation.")
+                    self.conversation_handler.print_and_save(
+                        "Failed to extract generalisation."
+                    )
                     break
         return success, self.max_attempts
 
@@ -415,7 +484,14 @@ class Experiment:
             if results[N]["equivalent"]:
                 feedback_prompt += "the generalisation is correct.\n"
             else:
-                max_length = int(len(''.join(map(str, results[N]['expected']['assertions'])))*1.5) if results[N]['expected']['assertions'] else 100
+                max_length = (
+                    int(
+                        len("".join(map(str, results[N]["expected"]["assertions"])))
+                        * 1.5
+                    )
+                    if results[N]["expected"]["assertions"]
+                    else 100
+                )
                 feedback_prompt += "The correct constraints are:\n"
                 feedback_prompt += f"\n{''.join(map(str, results[N]['expected']['assertions'])) if results[N]['expected']['assertions'] else 'None'}\n"
                 feedback_prompt += "\nYour generalisation implies the set:\n"
@@ -425,7 +501,7 @@ class Experiment:
                 # feedback_prompt += f"\n{results[N]['reason']}\n"
         return feedback_prompt
 
-    def  instantiate_generalisation(self, generalisation_file, N):
+    def instantiate_generalisation(self, generalisation_file, N):
         """
         Instantiate the generalization code for a specific N.
 
@@ -438,32 +514,47 @@ class Experiment:
         """
         try:
             output = subprocess.run(
-                ["python3", generalisation_file], capture_output=True, text=True, check=True, input=f"{N}"
+                ["python3", generalisation_file],
+                capture_output=True,
+                text=True,
+                check=True,
+                input=f"{N}",
             )
-            if output.stdout.strip()[2:] == "(assert )" or output.stdout.strip()[2:] == "" or output.stdout.strip()[2:] == "None":
+            if (
+                output.stdout.strip()[2:] == "(assert )"
+                or output.stdout.strip()[2:] == ""
+                or output.stdout.strip()[2:] == "None"
+            ):
                 return ""
             return output.stdout.strip()[2:]
         except subprocess.CalledProcessError as e:
-            self.conversation_handler.print_and_save(f"Error instantiating generalization: {e}")
+            self.conversation_handler.print_and_save(
+                f"Error instantiating generalization: {e}"
+            )
             return None
-
 
     def parse_raw_constraints(self, raw):
         """
         Parse raw SMT-LIB2 constraints into a single conjunctive form.
         """
         # Extract all individual assertions
-        assertions = [line.strip()[8:-1] for line in raw.splitlines() if line.startswith("(assert")]
+        assertions = [
+            line.strip()[8:-1]
+            for line in raw.splitlines()
+            if line.startswith("(assert")
+        ]
         # Combine into a single conjunctive expression
         return f"(and {' '.join(assertions)})"
 
-    def check_logical_equivalence(self, problem_name, N, original_assertions, generated_assertions):
+    def check_logical_equivalence(
+        self, problem_name, N, original_assertions, generated_assertions
+    ):
         """
         Check logical equivalence between original and generated constraints using Z3 CLI.
         Builds a combined .smt2 file, invokes Z3 to check equivalence in isolation.
 
         Note: Issue #7490 https://github.com/Z3Prover/z3/issues/7490 has been raised to address bug in Z3 Python API.
-        
+
         Args:
             problem_name (str): The name of the problem.
             N (int): The input size index.
@@ -473,16 +564,20 @@ class Experiment:
         Returns:
             dict: A dictionary containing the result and reason.
         """
-        result={}
+        result = {}
         orig_empty = not original_assertions.get("assertions")
         gen_empty = not generated_assertions.strip()
         if orig_empty and gen_empty:
-            self.conversation_handler.load("Constraints are logically equivalent - both empty.")
+            self.conversation_handler.load(
+                "Constraints are logically equivalent - both empty."
+            )
             result["result"] = True
             result["reason"] = "Both sets of constraints are empty."
             return result
         if orig_empty != gen_empty:
-            self.conversation_handler.load("Constraints are not logically equivalent - one empty, one not.")
+            self.conversation_handler.load(
+                "Constraints are not logically equivalent - one empty, one not."
+            )
             result["result"] = False
             result["reason"] = "One set of constraints is empty, the other is not."
             return result
@@ -526,9 +621,13 @@ class Experiment:
 (pop)
 """
         if len(smt_content.encode("utf-8")) > self.max_file_size:
-            self.conversation_handler.load(f"Constraints for N={N} too large (SIZE:{len(smt_content.encode('utf-8'))/1000000000}), aborting.")
+            self.conversation_handler.load(
+                f"Constraints for N={N} too large (SIZE:{len(smt_content.encode('utf-8'))/1000000000}), aborting."
+            )
             result["result"] = False
-            result["reason"] = "Constraints generated are too large and inefficiently wrong."
+            result["reason"] = (
+                "Constraints generated are too large and inefficiently wrong."
+            )
             return result
 
         out_dir = os.path.join(self.generals, problem_name)
@@ -543,13 +642,19 @@ class Experiment:
             output = proc.stdout.strip()
             self.conversation_handler.load(f"Z3 Output:\n{output}")
 
-            result["reason"] = " ".join(out for out in output.splitlines() if out.startswith("(error"))
+            result["reason"] = " ".join(
+                out for out in output.splitlines() if out.startswith("(error")
+            )
 
             # The output order after each (check-sat) is the order we see logically:
             #   1) A => B fail
             #   2) B => A fail
             # So parse line by line
-            results = [line for line in output.splitlines() if line in ("sat", "unsat", "unknown")]
+            results = [
+                line
+                for line in output.splitlines()
+                if line in ("sat", "unsat", "unknown")
+            ]
 
             if len(results) < 2:
                 self.conversation_handler.load("Could not parse results correctly.")
@@ -560,11 +665,15 @@ class Experiment:
             # i.e. A=>B fails => results[0] == sat
             # i.e. B=>A fails => results[1] == sat
             if results[0] == "sat":
-                self.conversation_handler.load("Original does not imply generated. Not equivalent.")
+                self.conversation_handler.load(
+                    "Original does not imply generated. Not equivalent."
+                )
                 result["result"] = False
                 return result
             if results[1] == "sat":
-                self.conversation_handler.load("Generated does not imply original. Not equivalent.")
+                self.conversation_handler.load(
+                    "Generated does not imply original. Not equivalent."
+                )
                 result["result"] = False
                 return result
 
@@ -589,8 +698,14 @@ class Experiment:
 
     def _calculate_individual_stats(self, problem_name, success, attempts):
         """Calculate individual stats without file operations"""
-        succeeded = all(success.get(N,{}).get("equivalent",False) for N in range(1, self.max_examples + 1))
-        examples_right = sum(success.get(N, {}).get("equivalent", False) for N in range(1, self.max_examples + 1))
+        succeeded = all(
+            success.get(N, {}).get("equivalent", False)
+            for N in range(1, self.max_examples + 1)
+        )
+        examples_right = sum(
+            success.get(N, {}).get("equivalent", False)
+            for N in range(1, self.max_examples + 1)
+        )
         return {
             "succeeded": succeeded,
             "attempts": attempts,
@@ -600,11 +715,14 @@ class Experiment:
                     "expected": success.get(N, {}).get("expected"),
                     "predicted": success.get(N, {}).get("predicted"),
                     "equivalent": success.get(N, {}).get("equivalent"),
-                } for N in range(1, self.max_examples + 1)
-            }
+                }
+                for N in range(1, self.max_examples + 1)
+            },
         }
 
-    def _calculate_overall_stats(self, current_stats, succeeded, attempts, examples_right):
+    def _calculate_overall_stats(
+        self, current_stats, succeeded, attempts, examples_right
+    ):
         """Calculate updated overall stats without file operations"""
         if not current_stats:
             current_stats = {
@@ -613,16 +731,16 @@ class Experiment:
                 "average_attempts": 0.0,
                 "max_attempts": 0,
                 "average_examples_right": 0.0,
-                "max_examples_right": 0
+                "max_examples_right": 0,
             }
-        
+
         if succeeded:
             current_stats["succeeded"] += 1
         else:
             current_stats["failed"] += 1
 
         total_problems = current_stats["succeeded"] + current_stats["failed"]
-        
+
         # Update attempts
         current_stats["average_attempts"] = (
             (current_stats["average_attempts"] * (total_problems - 1)) + attempts
@@ -631,45 +749,50 @@ class Experiment:
 
         # Update examples_right
         current_stats["average_examples_right"] = (
-            (current_stats["average_examples_right"] * (total_problems - 1)) + examples_right
+            (current_stats["average_examples_right"] * (total_problems - 1))
+            + examples_right
         ) / total_problems
-        current_stats["max_examples_right"] = max(examples_right, current_stats["max_examples_right"])
+        current_stats["max_examples_right"] = max(
+            examples_right, current_stats["max_examples_right"]
+        )
 
         return current_stats
 
     def update_individual_stats(self, problem_name, success, attempts):
         individual_stats_path = os.path.join(self.stats_dir, "individual_stats.json")
         stats = self._load_json(individual_stats_path)
-        
+
         # Calculate new stats
-        stats[problem_name] = self._calculate_individual_stats(problem_name, success, attempts)
-        
+        stats[problem_name] = self._calculate_individual_stats(
+            problem_name, success, attempts
+        )
+
         # Save to file
         with open(individual_stats_path, "w") as file:
             json.dump(stats, file, indent=2)
-        
+
         # Update overall stats
         self.update_overall_stats(
-            stats[problem_name]["succeeded"], 
-            attempts, 
-            stats[problem_name]["examples_right"]
+            stats[problem_name]["succeeded"],
+            attempts,
+            stats[problem_name]["examples_right"],
         )
-        
+
         return stats
 
     def update_overall_stats(self, succeeded, attempts, examples_right):
         overall_stats_path = os.path.join(self.stats_dir, "overall_stats.json")
         current_stats = self._load_json(overall_stats_path)
-        
+
         # Calculate new stats
         updated_stats = self._calculate_overall_stats(
             current_stats, succeeded, attempts, examples_right
         )
-        
+
         # Save to file
         with open(overall_stats_path, "w") as file:
             json.dump(updated_stats, file, indent=2)
-        
+
         return updated_stats
 
     def save_logs(self, problem_name):
@@ -725,28 +848,42 @@ if __name__ == "__main__":
     load_dotenv()
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    USE_OPENAI = False
+    arguments = argparse.ArgumentParser(
+        description="SPF Constraint Generalization Experiment"
+    )
+    arguments.add_argument(
+        "--model-type",
+        choices=["openai", "huggingface"],
+        required=True,
+        help="Type of model to use"
+    )
+    arguments.add_argument(
+        "--model",
+        required=True,
+        help="Model identifier"
+    )
+    args = arguments.parse_args()
+
     MAX_EXAMPLES = 30
     MAX_SHOWN_EXAMPLES = 10
     MAX_ATTEMPTS = 10
 
-
-    if USE_OPENAI:
+    if args.openai:
         llm_helper = openai.OpenAIHelper(
             api_key=os.getenv("OPENAI_KEY"),
-            model=os.getenv("OPENAI_MODEL")
+            model=args.model
         )
-        if not os.path.exists(f"{os.getenv('OPENAI_MODEL')}"):
-            os.makedirs(f"{os.getenv('OPENAI_MODEL')}")
-        resultsFolder = f"{os.getenv('OPENAI_MODEL')}"
-    else:
+        if not os.path.exists(f"{args.model}"):
+            os.makedirs(f"{args.model}")
+        resultsFolder = f"{args.model}"
+    elif args.huggingface:
         llm_helper = huggingface.HuggingFaceModelFactory.create(
-            model_name=os.getenv("HUGGINGFACE_MODEL"),
-            token=os.getenv("HUGGINGFACE_TOKEN")
-            )
-        if not os.path.exists(f"{os.getenv('HUGGINGFACE_MODEL')}"):
-            os.makedirs(f"{os.getenv('HUGGINGFACE_MODEL')}")
-        resultsFolder = f"{os.getenv('HUGGINGFACE_MODEL')}"
+            model_name=args.model,
+            token=os.getenv("HUGGINGFACE_TOKEN"),
+        )
+        if not os.path.exists(f"{args.model}"):
+            os.makedirs(f"{args.model}")
+        resultsFolder = f"{args.model}"
 
     # Run the experiment
     experiment = Experiment(

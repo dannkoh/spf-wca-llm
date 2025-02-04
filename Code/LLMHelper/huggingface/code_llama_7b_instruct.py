@@ -8,25 +8,25 @@ from typing import List, Dict, Any
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 
-class microsoftPhi3_5(BaseHuggingFaceModel):
+class CodeLlama7bInstruct(BaseHuggingFaceModel):
 
     def __init__(self, token: str):
-        super().__init__("microsoft/Phi-3.5-mini-instruct", token)
+        super().__init__("meta-llama/CodeLlama-7b-Instruct", token)
 
     def _setup_model(self) -> None:
         """
-        Setup the Phi-3.5-mini-instruct model from Microsoft.
+        Setup the CodeLlama-7b model from Meta.
         """
         tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
-        # quantization_config = transformers.BitsAndBytesConfig(
-        #     load_in_4bit=True,
-        # bnb_4bit_compute_dtype=torch.float16,
-        # bnb_4bit_use_double_quant=True,
-        # bnb_4bit_quant_type="nf4",
-        # )
         quantization_config = transformers.BitsAndBytesConfig(
-            load_in_8bit=True
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
         )
+        # quantization_config = transformers.BitsAndBytesConfig(
+        #     load_in_8bit=True
+        # )
         model = transformers.AutoModelForCausalLM.from_pretrained(
             self.model_name,
             quantization_config=quantization_config,
@@ -136,4 +136,4 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
 
 
 # Register the model with the factory
-HuggingFaceModelFactory.register("microsoft/Phi-3.5-mini-instruct", microsoftPhi3_5)
+HuggingFaceModelFactory.register("meta-llama/CodeLlama-7b-Instruct", CodeLlama7bInstruct)
