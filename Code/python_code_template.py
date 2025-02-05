@@ -1,4 +1,4 @@
-def generate_constraints(N):
+def generate_constraints(N: int) -> str:
 
     # Do some logic here to return a SMT-LIB Format String e.g. (assert (and (op1 x y) (op2 x z)))
 
