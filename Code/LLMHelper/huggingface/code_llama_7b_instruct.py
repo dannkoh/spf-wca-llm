@@ -17,7 +17,11 @@ class CodeLlama7bInstruct(BaseHuggingFaceModel):
         """
         Setup the CodeLlama-7b model from Meta.
         """
-        tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
+        tokenizer = transformers.AutoTokenizer.from_pretrained(
+            self.model_name,
+            trust_remote_code=True,
+            token=self.token
+            )
         quantization_config = transformers.BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.float16,
@@ -33,6 +37,7 @@ class CodeLlama7bInstruct(BaseHuggingFaceModel):
             trust_remote_code=True,
             torch_dtype=torch.float16,
             device_map="auto",
+            token=self.token
         )
         self.pipeline = transformers.pipeline(
             "text-generation",
