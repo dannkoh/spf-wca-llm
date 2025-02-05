@@ -339,12 +339,12 @@ class Experiment:
 
             # Ensure the code is properly formatted to accept N as a parameter
             if (
-                "def generate_constraints(N):" not in generalisation
+                "def generate_constraints(N: int) -> str:" not in generalisation
                 or not Experiment.validPython(generalisation)
             ):
                 self.conversation_handler.load("Failed to extract generalisation.")
                 self.conversation_handler.load(
-                    f"def generate_constraints(N): found: {True if 'def generate_constraints(N):' in generalisation else False}"
+                    f"def generate_constraints(N): found: {True if 'def generate_constraints(N: int) -> str:' in generalisation else False}"
                 )
                 self.conversation_handler.load(
                     f"Valid Python: {Experiment.validPython(generalisation)}"
