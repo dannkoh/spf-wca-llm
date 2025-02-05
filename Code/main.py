@@ -299,14 +299,14 @@ class Experiment:
             exec(compile(generalisation, "<string>", "exec"), namespace)
 
             # Check if function exists
-            if "generate_constraints" not in namespace or 'N = int(input("N="))\nconstraints = generate_constraints(N)\nprint(constraints)':
+            if "generate_constraints" not in namespace:
                 return False
 
             # Test function call
             result = namespace["generate_constraints"](1)
 
             # Verify return type and non-empty
-            return isinstance(result, str)
+            return isinstance(result, str) 
         except Exception:
             return False
 
