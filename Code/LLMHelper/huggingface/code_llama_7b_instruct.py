@@ -11,7 +11,7 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 class CodeLlama7bInstruct(BaseHuggingFaceModel):
 
     def __init__(self, token: str):
-        super().__init__("meta-llama/CodeLlama-7b-Instruct", token)
+        super().__init__("meta-llama/CodeLlama-7b-Instruct-hf", token)
 
     def _setup_model(self) -> None:
         """
@@ -136,4 +136,4 @@ class CodeLlama7bInstruct(BaseHuggingFaceModel):
 
 
 # Register the model with the factory
-HuggingFaceModelFactory.register("meta-llama/CodeLlama-7b-Instruct", CodeLlama7bInstruct)
+HuggingFaceModelFactory.register("meta-llama/CodeLlama-7b-Instruct-hf", CodeLlama7bInstruct)
