@@ -1,0 +1,33 @@
+; Combined SMT for checking equivalence
+; Original constants:
+(declare-const in0 Int)
+(declare-const in1 Int)
+
+; Original constraints (A):
+(push)
+(assert  ( =  in0 in1))
+(pop)
+
+; Generated constraints (B):
+(push)
+(assert (and (forall (x Int) (y Int) (>= x 0) (< x N) (>= y 0) (< y N) (= (select in x) (select in y)) (not (= x y))))(assert (and (= (select in 0) (select in N-1))))
+(pop)
+
+; Now do two checks:
+; 1) A => B fails means we push A and then (not B)
+(push)
+(assert  ( =  in0 in1))
+(assert (not
+(and (and (forall (x Int) (y Int) (>= x 0) (< x N) (>= y 0) (< y N) (= (select in x) (select in y)) (not (= x y))))(assert (and (= (select in 0) (select in N-1))))
+))
+(check-sat)
+(pop)
+
+; 2) B => A fails means we push B and then (not A)
+(push)
+(assert (and (forall (x Int) (y Int) (>= x 0) (< x N) (>= y 0) (< y N) (= (select in x) (select in y)) (not (= x y))))(assert (and (= (select in 0) (select in N-1))))
+(assert (not
+(and  ( =  in0 in1))
+))
+(check-sat)
+(pop)
