@@ -306,7 +306,7 @@ class Experiment:
             result = namespace["generate_constraints"](1)
 
             # Verify return type and non-empty
-            return isinstance(result, str) or result is None
+            return isinstance(result, str)
         except Exception:
             return False
 
