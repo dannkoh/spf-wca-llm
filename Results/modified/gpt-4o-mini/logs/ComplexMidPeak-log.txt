@@ -1,0 +1,1002 @@
+
+############################################################
+I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:
+
+The constraints for input (N=1):
+
+None
+
+
+The constraints for input (N=2):
+
+(assert  ( <  in0 in1))
+
+
+The constraints for input (N=3):
+
+(assert (and  ( <  in0 in1)  ( >  in1 in2)))
+
+
+The constraints for input (N=4):
+
+(assert (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3)))
+
+
+The constraints for input (N=5):
+
+(assert (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3))  ( >  in3 in4)))
+
+
+The constraints for input (N=6):
+
+(assert (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5)))
+
+
+The constraints for input (N=7):
+
+(assert (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5))  ( >  in5 in6)))
+
+
+The constraints for input (N=8):
+
+(assert (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7)))
+
+
+The constraints for input (N=9):
+
+(assert (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8)))
+
+
+The constraints for input (N=10):
+
+(assert (and (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( <  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8))  ( >  in8 in9)))
+
+
+Here is more context for you to generalize the constraints better. Below is the source code for the SPF problem:
+
+```java
+package own;
+
+import gov.nasa.jpf.symbc.Debug;
+
+public class ComplexMidPeak {
+
+    public static void algo(int[] a) {
+        boolean fail = false;
+        boolean skip = false;
+        final int N = a.length;
+        for (int i = 0; i < N-1; i++) {
+            if (i < Math.ceil(N/2)) {
+                if (a[i] < a[i+1]){
+                    // Skip
+                    skip = true;
+                } else {
+                    fail = true;
+                }
+            } else {
+                if (a[i] > a[i+1]){
+                    // Skip
+                    skip = true;
+                } else {
+                    fail = true;
+                }
+            }
+        }
+        if (!fail) {
+            int aa = 99999;
+            for (int i = 0; i < N; i++) {
+                aa = aa*aa;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        final int N = Integer.parseInt(args[0]);
+
+        int a[] = new int[N];
+        for (int i = 0; i < N; i++) {
+            a[i] = Debug.makeSymbolicInteger("in"+i);
+        }
+
+        // We only measure the complexity of this function itself.
+        algo(a);
+    }
+}
+
+```
+
+
+Generalize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.
+
+Use this code template to formally express the generalisation for N constraints:
+```python
+def generate_constraints(N):
+
+    # Do some logic here to return a SMT-LIB Format String e.g. (assert (and (op1 x y) (op2 x z)))
+
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)```
+
+Each inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).
+############################################################
+CASUAL
+Alright, so you're trying to analyze the longest execution path of a Java program based on various input sizes (N) and have figured out a way to construct constraints that describe valid input sets. The way you structured your conditions makes sense: as N increases, you introduce more comparisons to maintain some kind of order among the elements. 
+
+For instance, with N=2, you just have one condition on two variables; but by the time you reach N=10, you have a series of comparisons that need to be validated - some are increasing and then you switch to decreasing as you reach the latter part of the array. My guess is that you're establishing a kind of 'peak' in the input, where elements rise up to a certain point and then fall off, keeping the analysis of the function's success based on whether it hits the peak conditions or not.
+
+What you've sorted out so far is really about defining a structured way to create those conditions programmatically with a function. Let's jump to that!
+
+FORMAL
+```python
+def generate_constraints(N):
+    conditions = []
+    
+    # Handling the base case of N=1
+    if N == 1:
+        return ""
+    
+    # For inputs greater than 1, generate the constraints
+    for i in range(N):
+        if i < N // 2:  # First half: strictly ascending
+            conditions.append(f"( < in{i} in{i+1})")
+        if i > 0 and i >= N // 2:  # Second half: strictly descending
+            if i < N - 1:
+                conditions.append(f"( > in{i} in{i+1})")
+    
+    # Combining conditions
+    constraint_str = " (and ".join(conditions)
+    return f"(assert (and {constraint_str}))"
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+############################################################
+                     ATTEMPT 1
+############################################################
+                     Checking Equivalence for N=1
+Constraints are logically equivalent - both empty.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_2.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_3.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 15 column 0: invalid assert command, ')' expected")
+
+Could not parse results correctly.
+
+                    N=3: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_4.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 16 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=4: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_5.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 17 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=5: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_6.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 18 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=6: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_7.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 19 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=7: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_8.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 20 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=8: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_9.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 21 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=9: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_10.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 22 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=10: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_11.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 23 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=11: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_12.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 24 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=12: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_13.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 25 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=13: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_14.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 26 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=14: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_15.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 27 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=15: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_16.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 28 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=16: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_17.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 29 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=17: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_18.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 30 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=18: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_19.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 31 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=19: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_20.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 32 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=20: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_21.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 33 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=21: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_22.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 34 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=22: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_23.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 35 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=23: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_24.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 36 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=24: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_25.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 37 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=25: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_26.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 38 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=26: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_27.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 39 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=27: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_28.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 40 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=28: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_29.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 41 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=29: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_30.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 42 column 4: invalid function application, arguments missing")
+
+Could not parse results correctly.
+
+                    N=30: Not Equivalent
+
+#################### Retrying Generalisation ####################
+
+############################################################
+The generalization is not correct. Remember to always structure your reply with the same headings. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'. Remember to use SMT-LIB format for the constraints and output a valid python program.
+
+For N=1: the generalisation is correct.
+
+
+For N=2: the generalisation is correct.
+
+
+For N=3: The correct constraints are:
+
+(assert (and  ( <  in0 in1)  ( >  in1 in2)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( > in1 in2)))
+
+
+This is not correct. 
+
+
+For N=4: The correct constraints are:
+
+(assert (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( > in2 in3)))
+
+
+This is not correct. 
+
+
+For N=5: The correct constraints are:
+
+(assert (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( >  in2 in3))  ( >  in3 in4)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( > in2 in3) (and ( > in3 in4)))
+
+
+This is not correct. 
+
+
+For N=6: The correct constraints are:
+
+(assert (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( > in3 in4) (and ( > in4 in5)))
+
+
+This is not correct. 
+
+
+For N=7: The correct constraints are:
+
+(assert (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( >  in3 in4))  ( >  in4 in5))  ( >  in5 in6)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( > in3 in4) (and ( > in4 in5) (and ( > in5 in6)))
+
+
+This is not correct. 
+
+
+For N=8: The correct constraints are:
+
+(assert (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( < in3 in4) (and ( > in4 in5) (and ( > in5 in6) (and ( > in6 in7)))
+
+
+This is not correct. 
+
+
+For N=9: The correct constraints are:
+
+(assert (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( >  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( < in3 in4) (and ( > in4 in5) (and ( > in5 in6) (and ( > in6 in7) (and ( > in7 in8)))
+
+
+This is not correct. 
+
+
+For N=10: The correct constraints are:
+
+(assert (and (and (and (and (and (and (and (and  ( <  in0 in1)  ( <  in1 in2))  ( <  in2 in3))  ( <  in3 in4))  ( <  in4 in5))  ( >  in5 in6))  ( >  in6 in7))  ( >  in7 in8))  ( >  in8 in9)))
+
+Your generalisation implies the set:
+
+(assert (and ( < in0 in1) (and ( < in1 in2) (and ( < in2 in3) (and ( < in3 in4) (and ( < in4 in5) (and ( > in5 in6) (and ( > in6 in7) (and ( > in7 in8) (and ( > in8 in9)))
+
+
+This is not correct. 
+
+############################################################
+CASUAL
+Thank you for the detailed feedback! It looks like my previous attempt at generalizing the constraints ended up making a mess of how they should be structured. You rightly pointed out that the constraints need to be combined correctly using the appropriate logical structure to reflect the dependencies between the input variables. The main takeaway is that while constructing the constraints for different values of N, I should carefully coalesce the comparisons into the appropriate logical groups. 
+
+So here's the revised approach: the conditions for each segment of the sequence need to be grouped together properly using nested "and" operators to accurately reflect the increasing or decreasing patterns you're trying to capture. I’ll write that logic now.
+
+FORMAL
+```python
+def generate_constraints(N):
+    if N == 1:
+        return ""  # No constraints for N=1
+
+    conditions = []
+    
+    # Build the increasing part
+    for i in range(N - 1):
+        if i < N // 2:
+            conditions.append(f"( < in{i} in{i + 1})")
+        else:
+            break
+        
+    # Build the decreasing part
+    for i in range(N - 1):
+        if i >= N // 2:
+            conditions.append(f"( > in{i} in{i + 1})")
+            
+    # Now, form the nested AND structure
+    nested_conditions = []
+    
+    # Form the increasing conditions
+    if conditions:
+        current_group = []
+        for i in range(N):
+            if i < N // 2:
+                current_group.append(conditions[i])
+            else:
+                break
+        nested_conditions.append(f"(and {' '.join(current_group)})")
+    
+    # Add decreasing conditions
+    current_group = []
+    for i in range(N - 1):
+        if i >= N // 2:
+            current_group.append(conditions[i])
+    
+    if current_group:
+        nested_conditions.append(f"(and {' '.join(current_group)})")
+    
+    final_conditions = " ".join(nested_conditions)
+    return f"(assert (and {final_conditions}))"
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+############################################################
+                     ATTEMPT 2
+############################################################
+                     Checking Equivalence for N=1
+Constraints are logically equivalent - both empty.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_2.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_3.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_4.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=4: Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_5.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_6.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=6: Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_7.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_8.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=8: Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_9.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_10.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=10: Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_11.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_12.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=12: Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_13.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_14.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=14: Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_15.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_16.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=16: Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_17.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_18.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=18: Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_19.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_20.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=20: Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_21.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_22.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=22: Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_23.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_24.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=24: Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_25.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_26.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=26: Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_27.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_28.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=28: Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_29.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4o-mini/generals/ComplexMidPeak/ComplexMidPeak_30.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=30: Equivalent
+
+Generalization verified successfully for all examples.

@@ -351,6 +351,7 @@ class Experiment:
                 )
                 # Provide feedback to the LLM to correct the code format
                 correction_prompt = self.prompts["get_gen_format"]
+                correction_prompt += self.prompts["get_gen_format2"]
                 correction_prompt += self.prompts["get_gen_end1"]
                 with open("python_code_template.py", "r") as file:
                     template_code = file.read()
@@ -812,10 +813,11 @@ class Experiment:
 prompts = {
     "get_gen_sys": "Always respond first with an informal analysis in natural language (under the heading 'CASUAL', all caps), then with a formal Python program that outputs constraints in SMT-LIB format inside a code block (under the heading 'FORMAL', all caps). Make sure there is only one code block in your answer.",
     "get_gen_start": "I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:",
-    "get_gen_end": "\n\nGeneralize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.",
+    "get_gen_end": "\n\nGeneralize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint string for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.",
     "get_gen_end1": "\n\nUse this code template to formally express the generalisation for N constraints:\n```python\n",
     "get_gen_end2": "```\n\nEach inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).",
     "get_gen_format": "Your response was not correct. Your 'FORMAL' section should use the template provided below, ensure your code below adheres to the SMTLIB format and should be a valid python program. Please provide the correct code.",
+    "get_gen_format2": "Your code MUST return a single string that represents the constraints in SMT-LIB format.",
     "get_gen_feedback": "The generalization is not correct. Remember to always structure your reply with the same headings. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'. Remember to use SMT-LIB format for the constraints and output a valid python program.",
 }
 

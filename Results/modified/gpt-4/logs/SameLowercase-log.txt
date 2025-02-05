@@ -1,0 +1,623 @@
+
+############################################################
+I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:
+
+The constraints for input (N=1):
+
+(assert (and  ( >=  in0 97)  ( <=  in0 122)))
+
+
+The constraints for input (N=2):
+
+(assert (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122)))
+
+
+The constraints for input (N=3):
+
+(assert (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122)))
+
+
+The constraints for input (N=4):
+
+(assert (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122)))
+
+
+The constraints for input (N=5):
+
+(assert (and (and (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122))  ( >=  in4 97))  ( <=  in4 122)))
+
+
+The constraints for input (N=6):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122))  ( >=  in4 97))  ( <=  in4 122))  ( >=  in5 97))  ( <=  in5 122)))
+
+
+The constraints for input (N=7):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122))  ( >=  in4 97))  ( <=  in4 122))  ( >=  in5 97))  ( <=  in5 122))  ( >=  in6 97))  ( <=  in6 122)))
+
+
+The constraints for input (N=8):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122))  ( >=  in4 97))  ( <=  in4 122))  ( >=  in5 97))  ( <=  in5 122))  ( >=  in6 97))  ( <=  in6 122))  ( >=  in7 97))  ( <=  in7 122)))
+
+
+The constraints for input (N=9):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122))  ( >=  in4 97))  ( <=  in4 122))  ( >=  in5 97))  ( <=  in5 122))  ( >=  in6 97))  ( <=  in6 122))  ( >=  in7 97))  ( <=  in7 122))  ( >=  in8 97))  ( <=  in8 122)))
+
+
+The constraints for input (N=10):
+
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( >=  in0 97)  ( <=  in0 122))  ( >=  in1 97))  ( <=  in1 122))  ( >=  in2 97))  ( <=  in2 122))  ( >=  in3 97))  ( <=  in3 122))  ( >=  in4 97))  ( <=  in4 122))  ( >=  in5 97))  ( <=  in5 122))  ( >=  in6 97))  ( <=  in6 122))  ( >=  in7 97))  ( <=  in7 122))  ( >=  in8 97))  ( <=  in8 122))  ( >=  in9 97))  ( <=  in9 122)))
+
+
+Here is more context for you to generalize the constraints better. Below is the source code for the SPF problem:
+
+```java
+package own;
+
+import gov.nasa.jpf.symbc.Debug;
+
+// public class SameChar {
+
+//     public static void algo(String str) {
+//         boolean fail = false;
+//         boolean skip = false;
+//         final int N = str.length();
+//         for (int i = 0; i < N; i++) {
+//             if (str.charAt(i) == 'x'){
+//                 // Skip
+//                 skip = true;
+//             } else {
+//                 fail = true;
+//             }
+//         }
+//         if (!fail) {
+//             int aa = 99999;
+//             for (int i = 0; i < N; i++) {
+//                 aa = aa*aa;
+//             }
+//         }
+//     }
+
+//     public static void main(String[] args) {
+//         final int N = Integer.parseInt(args[0]);
+
+//         char[] chars = new char[N];
+//         for (int i=0;i<N;i++)
+//             chars[i]=Debug.makeSymbolicChar("in"+i);
+//         String str = new String(chars);
+
+//         // We only measure the complexity of this function itself.
+//         algo(str);
+//     }
+// }
+
+public class SameLowercase {
+
+    public static void algo(char[] chars) {
+        boolean fail = false;
+        boolean skip = false;
+        final int N = chars.length;
+        for (int i = 0; i < N; i++) {
+            if (chars[i] >= 'a' && chars[i] <= 'z'){
+                // Skip
+                skip = true;
+            } else {
+                fail = true;
+            }
+        }
+        if (!fail) {
+            int aa = 99999;
+            for (int i = 0; i < N; i++) {
+                aa = aa*aa;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        final int N = Integer.parseInt(args[0]);
+
+        char[] chars = new char[N];
+        for (int i=0;i<N;i++)
+            chars[i]=Debug.makeSymbolicChar("in"+i);
+
+        // We only measure the complexity of this function itself.
+        algo(chars);
+    }
+}
+```
+
+
+Generalize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.
+
+Use this code template to formally express the generalisation for N constraints:
+```python
+def generate_constraints(N):
+
+    # Do some logic here to return a SMT-LIB Format String e.g. (assert (and (op1 x y) (op2 x z)))
+
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)```
+
+Each inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).
+############################################################
+CASUAL:
+
+The set of constraints appears to follow a pattern where for each input `in` within the size `N`, two conditions need to be met: the input `in` needs to be greater than or equal to 97 and less than or equal to 122. This corresponds to the ASCII values for lowercase letters from 'a' to 'z' (inclusive). The pattern continues for each input `in` from 0 to N-1 (as the input `in` starts from in0 and goes up to in(N-1) for N inputs). 
+
+We can generalize this by creating a scenario where for each input `in`, we assert the two conditions `( >=  inx 97)` and `( <=  inx 122)`, where x ranges from 0 to N-1. Therefore, we can say that any valid set of inputs will satisfy this condition for all its constituents.
+
+FORMAL:
+
+```python
+def generate_constraints(N):
+    constraints = "(assert "
+    for i in range(N):
+        constraints += "(and (>= in" + str(i) + " 97) (<= in" + str(i) + " 122) "
+    constraints += "true" + ")" * (2 * N + 1)
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+
+This Python function just loops over the range `N` and generates the requisite greater than or equal to and less than or equal to conditions for each input variable `in`. It then appends them as nested "and" clauses in the necessary SMT-LIB format. The "true" at the end of the condition is necessary to close the first opening "and" clause in the SMT-LIB language syntax.
+############################################################
+                     ATTEMPT 1
+############################################################
+                     Checking Equivalence for N=1
+Created gpt-4/generals/SameLowercase/SameLowercase_1.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 12 column 44: invalid command, '(' expected")
+(error "line 21 column 1: invalid command, '(' expected")
+unsat
+(error "line 27 column 44: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4/generals/SameLowercase/SameLowercase_2.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 13 column 75: invalid command, '(' expected")
+(error "line 22 column 0: invalid command, '(' expected")
+unsat
+(error "line 28 column 75: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4/generals/SameLowercase/SameLowercase_3.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 14 column 106: invalid command, '(' expected")
+(error "line 22 column 105: invalid command, '(' expected")
+unsat
+(error "line 29 column 106: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4/generals/SameLowercase/SameLowercase_4.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 15 column 137: invalid command, '(' expected")
+(error "line 23 column 136: invalid command, '(' expected")
+unsat
+(error "line 30 column 137: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=4: Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4/generals/SameLowercase/SameLowercase_5.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 16 column 168: invalid command, '(' expected")
+(error "line 24 column 167: invalid command, '(' expected")
+unsat
+(error "line 31 column 168: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4/generals/SameLowercase/SameLowercase_6.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 17 column 199: invalid command, '(' expected")
+(error "line 25 column 198: invalid command, '(' expected")
+unsat
+(error "line 32 column 199: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=6: Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4/generals/SameLowercase/SameLowercase_7.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 18 column 230: invalid command, '(' expected")
+(error "line 26 column 229: invalid command, '(' expected")
+unsat
+(error "line 33 column 230: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4/generals/SameLowercase/SameLowercase_8.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 19 column 261: invalid command, '(' expected")
+(error "line 27 column 260: invalid command, '(' expected")
+unsat
+(error "line 34 column 261: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=8: Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4/generals/SameLowercase/SameLowercase_9.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 20 column 292: invalid command, '(' expected")
+(error "line 28 column 291: invalid command, '(' expected")
+unsat
+(error "line 35 column 292: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4/generals/SameLowercase/SameLowercase_10.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 21 column 323: invalid command, '(' expected")
+(error "line 29 column 322: invalid command, '(' expected")
+unsat
+(error "line 36 column 323: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=10: Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4/generals/SameLowercase/SameLowercase_11.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 22 column 356: invalid command, '(' expected")
+(error "line 30 column 355: invalid command, '(' expected")
+unsat
+(error "line 37 column 356: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4/generals/SameLowercase/SameLowercase_12.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 23 column 389: invalid command, '(' expected")
+(error "line 31 column 388: invalid command, '(' expected")
+unsat
+(error "line 38 column 389: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=12: Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4/generals/SameLowercase/SameLowercase_13.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 24 column 422: invalid command, '(' expected")
+(error "line 32 column 421: invalid command, '(' expected")
+unsat
+(error "line 39 column 422: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4/generals/SameLowercase/SameLowercase_14.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 25 column 455: invalid command, '(' expected")
+(error "line 33 column 454: invalid command, '(' expected")
+unsat
+(error "line 40 column 455: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=14: Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4/generals/SameLowercase/SameLowercase_15.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 26 column 488: invalid command, '(' expected")
+(error "line 34 column 487: invalid command, '(' expected")
+unsat
+(error "line 41 column 488: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4/generals/SameLowercase/SameLowercase_16.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 27 column 521: invalid command, '(' expected")
+(error "line 35 column 520: invalid command, '(' expected")
+unsat
+(error "line 42 column 521: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=16: Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4/generals/SameLowercase/SameLowercase_17.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 28 column 554: invalid command, '(' expected")
+(error "line 36 column 553: invalid command, '(' expected")
+unsat
+(error "line 43 column 554: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4/generals/SameLowercase/SameLowercase_18.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 29 column 587: invalid command, '(' expected")
+(error "line 37 column 586: invalid command, '(' expected")
+unsat
+(error "line 44 column 587: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=18: Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4/generals/SameLowercase/SameLowercase_19.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 30 column 620: invalid command, '(' expected")
+(error "line 38 column 619: invalid command, '(' expected")
+unsat
+(error "line 45 column 620: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4/generals/SameLowercase/SameLowercase_20.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 31 column 653: invalid command, '(' expected")
+(error "line 39 column 652: invalid command, '(' expected")
+unsat
+(error "line 46 column 653: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=20: Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4/generals/SameLowercase/SameLowercase_21.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 32 column 686: invalid command, '(' expected")
+(error "line 40 column 685: invalid command, '(' expected")
+unsat
+(error "line 47 column 686: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4/generals/SameLowercase/SameLowercase_22.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 33 column 719: invalid command, '(' expected")
+(error "line 41 column 718: invalid command, '(' expected")
+unsat
+(error "line 48 column 719: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=22: Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4/generals/SameLowercase/SameLowercase_23.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 34 column 752: invalid command, '(' expected")
+(error "line 42 column 751: invalid command, '(' expected")
+unsat
+(error "line 49 column 752: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4/generals/SameLowercase/SameLowercase_24.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 35 column 785: invalid command, '(' expected")
+(error "line 43 column 784: invalid command, '(' expected")
+unsat
+(error "line 50 column 785: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=24: Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4/generals/SameLowercase/SameLowercase_25.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 36 column 818: invalid command, '(' expected")
+(error "line 44 column 817: invalid command, '(' expected")
+unsat
+(error "line 51 column 818: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4/generals/SameLowercase/SameLowercase_26.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 37 column 851: invalid command, '(' expected")
+(error "line 45 column 850: invalid command, '(' expected")
+unsat
+(error "line 52 column 851: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=26: Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4/generals/SameLowercase/SameLowercase_27.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 38 column 884: invalid command, '(' expected")
+(error "line 46 column 883: invalid command, '(' expected")
+unsat
+(error "line 53 column 884: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4/generals/SameLowercase/SameLowercase_28.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 39 column 917: invalid command, '(' expected")
+(error "line 47 column 916: invalid command, '(' expected")
+unsat
+(error "line 54 column 917: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=28: Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4/generals/SameLowercase/SameLowercase_29.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 40 column 950: invalid command, '(' expected")
+(error "line 48 column 949: invalid command, '(' expected")
+unsat
+(error "line 55 column 950: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4/generals/SameLowercase/SameLowercase_30.smt2. Now invoking Z3...
+
+Z3 Output:
+(error "line 41 column 983: invalid command, '(' expected")
+(error "line 49 column 982: invalid command, '(' expected")
+unsat
+(error "line 56 column 983: invalid command, '(' expected")
+unsat
+
+Constraints are logically equivalent.
+
+                    N=30: Equivalent
+
+Generalization verified successfully for all examples.

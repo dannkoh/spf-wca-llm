@@ -1,3 +1,0 @@
-A refined generalisation of the constraints for N inputs can be expressed as:
-- For all i < N-1, in(i) < in(i+1)
-- For all i < N-1, in(i) == in(i+1)
