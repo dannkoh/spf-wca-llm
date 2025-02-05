@@ -299,7 +299,7 @@ class Experiment:
             exec(compile(generalisation, "<string>", "exec"), namespace)
 
             # Check if function exists
-            if "generate_constraints" not in namespace:
+            if "generate_constraints" not in namespace or 'N = int(input("N="))\nconstraints = generate_constraints(N)\nprint(constraints)':
                 return False
 
             # Test function call
