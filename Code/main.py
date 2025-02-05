@@ -868,7 +868,7 @@ if __name__ == "__main__":
     MAX_SHOWN_EXAMPLES = 10
     MAX_ATTEMPTS = 10
 
-    if args.openai:
+    if args.model_type == "openai":
         llm_helper = openai.OpenAIHelper(
             api_key=os.getenv("OPENAI_KEY"),
             model=args.model
@@ -876,7 +876,7 @@ if __name__ == "__main__":
         if not os.path.exists(f"{args.model}"):
             os.makedirs(f"{args.model}")
         resultsFolder = f"{args.model}"
-    elif args.huggingface:
+    elif args.model_type == "huggingface":
         llm_helper = huggingface.HuggingFaceModelFactory.create(
             model_name=args.model,
             token=os.getenv("HUGGINGFACE_TOKEN"),
