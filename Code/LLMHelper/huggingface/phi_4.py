@@ -8,10 +8,10 @@ from typing import List, Dict, Any
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 
-class microsoftPhi3_5(BaseHuggingFaceModel):
+class microsoftPhi4(BaseHuggingFaceModel):
 
     def __init__(self, token: str):
-        super().__init__("microsoft/Phi-3.5-mini-instruct", token)
+        super().__init__("microsoft/Phi-4", token)
 
     def _setup_model(self) -> None:
         """
@@ -98,7 +98,7 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
 
     def get_response(self, history: List[Dict[str, str]], **kwargs) -> Dict[str, str]:
         """
-        Generate a response from the Phi-3.5 model while managing context length.
+        Generate a response from the Phi-4 model while managing context length.
         """
         limit = 12
         reduction_index = 0
@@ -136,4 +136,4 @@ class microsoftPhi3_5(BaseHuggingFaceModel):
 
 
 # Register the model with the factory
-HuggingFaceModelFactory.register("microsoft/Phi-3.5-mini-instruct", microsoftPhi3_5)
+HuggingFaceModelFactory.register("microsoft/Phi-4", microsoftPhi4)
