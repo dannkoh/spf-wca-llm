@@ -1,17 +1,10 @@
-def generate_constraints(N):
-    constraints = []
-    
+def generate_constraints(N: int) -> str:
+    constraints = ""
     for i in range(N):
-        if i % 2 == 0:
-            if i + 2 < N:
-                constraints.append(f"(assert (>= (a{i}) (a{i+2})))")
-            if i + 3 < N:
-                constraints.append(f"(assert (>= (a{i}) (a{i+3})))")
-        else:
-            if i - 1 >= 0:
-                constraints.append(f"(assert (>= (a{i}) (a{i-1})))")
-    
-    return " ".join(constraints)
+        left = f"in{i}"
+        right = f"in{i+1}"
+        constraints += f"(assert (< {left} {right}))\n"
+    return constraints
 
 N = int(input("N="))
 constraints = generate_constraints(N)

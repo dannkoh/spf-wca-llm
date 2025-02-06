@@ -1604,9 +1604,9 @@
     }
   },
   "SameOnlyThird": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 28,
     "generalisation": {
       "1": {
         "expected": {
@@ -1614,7 +1614,7 @@
           "assertions": []
         },
         "predicted": "(assert true)",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -1622,7 +1622,7 @@
           "assertions": []
         },
         "predicted": "(assert true)",
-        "equivalent": true
+        "equivalent": false
       },
       "3": {
         "expected": {
@@ -3563,9 +3563,9 @@
     }
   },
   "SimpleEveryThird": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 27,
     "generalisation": {
       "1": {
         "expected": {
@@ -3573,7 +3573,7 @@
           "assertions": []
         },
         "predicted": "(assert true)",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -3581,7 +3581,7 @@
           "assertions": []
         },
         "predicted": "(assert true)",
-        "equivalent": true
+        "equivalent": false
       },
       "3": {
         "expected": {
@@ -3589,7 +3589,7 @@
           "assertions": []
         },
         "predicted": "(assert true)",
-        "equivalent": true
+        "equivalent": false
       },
       "4": {
         "expected": {
@@ -4026,9 +4026,9 @@
     }
   },
   "SimpleSignFlip": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 29,
     "generalisation": {
       "1": {
         "expected": {
@@ -4036,7 +4036,7 @@
           "assertions": []
         },
         "predicted": "(assert (and))",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -4824,9 +4824,9 @@
     }
   },
   "SimpleSymmetric": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 29,
     "generalisation": {
       "1": {
         "expected": {
@@ -4834,7 +4834,7 @@
           "assertions": []
         },
         "predicted": "(assert (and))",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -14950,9 +14950,9 @@
     }
   },
   "SimpleUnique": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 29,
     "generalisation": {
       "1": {
         "expected": {
@@ -14960,7 +14960,7 @@
           "assertions": []
         },
         "predicted": "(assert (and ))",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -15748,9 +15748,9 @@
     }
   },
   "WeirdConstDiff": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 28,
     "generalisation": {
       "1": {
         "expected": {
@@ -15758,7 +15758,7 @@
           "assertions": []
         },
         "predicted": "(assert (and))",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -15766,7 +15766,7 @@
           "assertions": []
         },
         "predicted": "(assert (and))",
-        "equivalent": true
+        "equivalent": false
       },
       "3": {
         "expected": {
@@ -17334,9 +17334,9 @@
     }
   },
   "WeirdTimes": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 29,
     "generalisation": {
       "1": {
         "expected": {
@@ -17344,7 +17344,7 @@
           "assertions": []
         },
         "predicted": "(assert (and))",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
@@ -19862,9 +19862,9 @@
     }
   },
   "ComplexHalfEqual": {
-    "succeeded": true,
+    "succeeded": false,
     "attempts": 10,
-    "examples_right": 30,
+    "examples_right": 29,
     "generalisation": {
       "1": {
         "expected": {
@@ -19872,7 +19872,7 @@
           "assertions": []
         },
         "predicted": "(assert (and))",
-        "equivalent": true
+        "equivalent": false
       },
       "2": {
         "expected": {
