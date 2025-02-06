@@ -368,7 +368,24 @@ class Experiment:
                 )
             return generalisation
         else:
-            return None
+            self.conversation_handler.load("Failed to extract generalisation.")                # Provide feedback to the LLM to correct the code format
+            correction_prompt = self.prompts["get_gen_format"]
+            correction_prompt += self.prompts["get_gen_format2"]
+            correction_prompt += self.prompts["get_gen_end1"]
+            with open("python_code_template.py", "r") as file:
+                template_code = file.read()
+            correction_prompt += template_code
+            correction_prompt += self.prompts["get_gen_end2"]
+            llm_history.append({"role": "user", "content": correction_prompt})
+
+            response = self.llm_helper.get_response(history=llm_history)
+            content = response.choices[0].message.content
+            self.conversation_handler.print_and_save(content)
+            llm_history.append({"role": "assistant", "content": content})
+            return self.extract_generalisation(
+                content, llm_history, depth=depth + 1
+            )
+
 
     def evaluate_and_update_generalisation(
         self, constraints, generalisation, llm_history, directory_path, problem_name
