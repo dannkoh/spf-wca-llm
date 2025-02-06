@@ -837,15 +837,15 @@ directories = [
     # "../Dataset/spf_output/WeirdFibonacci/verbose/heuristic",
     # "../Dataset/spf_output/WeirdTimes/verbose/heuristic",
     # "../Dataset/spf_output/BadgerHash/verbose/heuristic",
-    # "../Dataset/spf_output/BadgerPassword/verbose/heuristic",
+    "../Dataset/spf_output/BadgerPassword/verbose/heuristic",
     # "../Dataset/spf_output/BadgerUsername/verbose/heuristic",
-    "../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic",
+    # "../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic",
     # "../Dataset/spf_output/ComplexHalfEqual/verbose/heuristic",
     # "../Dataset/spf_output/ComplexMidPeak/verbose/heuristic",
     # "../Dataset/spf_output/ComplexPalindrome/verbose/heuristic",
     # "../Dataset/spf_output/ComplexOddsEvens/verbose/heuristic",
 
-    "../Dataset/spf_output/WeirdHundred/verbose/heuristic",
+    # "../Dataset/spf_output/WeirdHundred/verbose/heuristic",
 
 
 ]
