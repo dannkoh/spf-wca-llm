@@ -1,6 +1,6 @@
 @using spf-wca
 
-target=own.ComplexFlipPos
+target=own.ComplexFlipPos_2
 shell=wcanalysis.WorstCaseAnalyzer
 
 symbolic.min_int=-200
@@ -16,4 +16,4 @@ symbolic.worstcase.input.max=30
 
 symbolic.worstcase.verbose=true
 symbolic.worstcase.outputpath=${spf-wca}/results_own/ComplexFlipPos_2
-symbolic.method=own.ComplexFlipPos.algo(con)
+symbolic.method=own.ComplexFlipPos_2.algo(con)

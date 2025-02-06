@@ -1,8 +1,8 @@
 {
-  "succeeded": 16,
+  "succeeded": 19,
   "failed": 5,
-  "average_attempts": 3.857142857142857,
+  "average_attempts": 3.5833333333333335,
   "max_attempts": 10,
-  "average_examples_right": 24.80952380952381,
+  "average_examples_right": 25.458333333333332,
   "max_examples_right": 30
 }

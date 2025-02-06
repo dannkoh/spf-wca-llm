@@ -34,13 +34,17 @@ class OpenAIHelper(BaseLLMHelper):
         ]
     }
     """
-
-
     def __init__(self, api_key, model):
-        """...existing code..."""
         openai.api_key = api_key
         self.model = model
         self.reduction_sizes = [4, 3, 2, 1]
+
+
+
+
+    def _setup_model(self, api_key, model):
+        pass
+
 
     def _reduce_context(self, history, reduction_index):
         """

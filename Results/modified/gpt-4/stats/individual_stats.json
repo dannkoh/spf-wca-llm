@@ -20199,234 +20199,785 @@
       },
       "2": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in1 Int)"
+          ],
+          "assertions": [
+            "(assert  ( <  in1 in0))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in1 in0)))",
         "equivalent": true
       },
       "3": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)"
+          ],
+          "assertions": [
+            "(assert (and  ( <  in0 in2)  ( <  in1 in0)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in2) ( <  in1 in0)))",
         "equivalent": true
       },
       "4": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in3 in2)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in3 in2)))",
         "equivalent": true
       },
       "5": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in4))  ( <  in3 in2)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in4) ( <  in3 in2)))",
         "equivalent": true
       },
       "6": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in5 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in5 in4)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in5 in4)))",
         "equivalent": true
       },
       "7": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in6))  ( <  in5 in4)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in6) ( <  in5 in4)))",
         "equivalent": true
       },
       "8": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in7 in6)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in7 in6)))",
         "equivalent": true
       },
       "9": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in8))  ( <  in7 in6)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in8) ( <  in7 in6)))",
         "equivalent": true
       },
       "10": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in9 in8)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in9 in8)))",
         "equivalent": true
       },
       "11": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in10))  ( <  in9 in8)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in10) ( <  in9 in8)))",
         "equivalent": true
       },
       "12": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in11 in10)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in11 in10)))",
         "equivalent": true
       },
       "13": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in12 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in12))  ( <  in11 in10)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in12) ( <  in11 in10)))",
         "equivalent": true
       },
       "14": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in13 in12)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in13 in12)))",
         "equivalent": true
       },
       "15": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in14 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in14))  ( <  in13 in12)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in14) ( <  in13 in12)))",
         "equivalent": true
       },
       "16": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in15 in14)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in15 in14)))",
         "equivalent": true
       },
       "17": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in16 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in16))  ( <  in15 in14)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in16) ( <  in15 in14)))",
         "equivalent": true
       },
       "18": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in17 in16)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in17 in16)))",
         "equivalent": true
       },
       "19": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in18))  ( <  in17 in16)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in18) ( <  in17 in16)))",
         "equivalent": true
       },
       "20": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in19 in18)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in19 in18)))",
         "equivalent": true
       },
       "21": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in20))  ( <  in19 in18)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in20) ( <  in19 in18)))",
         "equivalent": true
       },
       "22": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in21 in20)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in21 in20)))",
         "equivalent": true
       },
       "23": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in22))  ( <  in21 in20)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in22) ( <  in21 in20)))",
         "equivalent": true
       },
       "24": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in23 in22)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in23 in22)))",
         "equivalent": true
       },
       "25": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in22 in24))  ( <  in23 in22)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in22 in24) ( <  in23 in22)))",
         "equivalent": true
       },
       "26": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in22 in25))  ( <  in23 in22))  ( <  in25 in24)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in22 in25) ( <  in23 in22) ( <  in25 in24)))",
         "equivalent": true
       },
       "27": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in22 in25))  ( <  in23 in22))  ( <  in24 in26))  ( <  in25 in24)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in22 in25) ( <  in23 in22) ( <  in24 in26) ( <  in25 in24)))",
         "equivalent": true
       },
       "28": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in27 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in22 in25))  ( <  in23 in22))  ( <  in24 in27))  ( <  in25 in24))  ( <  in27 in26)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in22 in25) ( <  in23 in22) ( <  in24 in27) ( <  in25 in24) ( <  in27 in26)))",
         "equivalent": true
       },
       "29": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in28 Int)",
+            "(declare-const in27 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in22 in25))  ( <  in23 in22))  ( <  in24 in27))  ( <  in25 in24))  ( <  in26 in28))  ( <  in27 in26)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in22 in25) ( <  in23 in22) ( <  in24 in27) ( <  in25 in24) ( <  in26 in28) ( <  in27 in26)))",
         "equivalent": true
       },
       "30": {
         "expected": {
-          "constants": [],
-          "assertions": []
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in28 Int)",
+            "(declare-const in27 Int)",
+            "(declare-const in29 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and  ( <  in0 in3)  ( <  in1 in0))  ( <  in2 in5))  ( <  in3 in2))  ( <  in4 in7))  ( <  in5 in4))  ( <  in6 in9))  ( <  in7 in6))  ( <  in8 in11))  ( <  in9 in8))  ( <  in10 in13))  ( <  in11 in10))  ( <  in12 in15))  ( <  in13 in12))  ( <  in14 in17))  ( <  in15 in14))  ( <  in16 in19))  ( <  in17 in16))  ( <  in18 in21))  ( <  in19 in18))  ( <  in20 in23))  ( <  in21 in20))  ( <  in22 in25))  ( <  in23 in22))  ( <  in24 in27))  ( <  in25 in24))  ( <  in26 in29))  ( <  in27 in26))  ( <  in29 in28)))"
+          ]
         },
-        "predicted": "",
+        "predicted": "(assert (and ( <  in0 in3) ( <  in1 in0) ( <  in2 in5) ( <  in3 in2) ( <  in4 in7) ( <  in5 in4) ( <  in6 in9) ( <  in7 in6) ( <  in8 in11) ( <  in9 in8) ( <  in10 in13) ( <  in11 in10) ( <  in12 in15) ( <  in13 in12) ( <  in14 in17) ( <  in15 in14) ( <  in16 in19) ( <  in17 in16) ( <  in18 in21) ( <  in19 in18) ( <  in20 in23) ( <  in21 in20) ( <  in22 in25) ( <  in23 in22) ( <  in24 in27) ( <  in25 in24) ( <  in26 in29) ( <  in27 in26) ( <  in29 in28)))",
         "equivalent": true
       }
     }
@@ -23606,6 +24157,804 @@
         },
         "predicted": "(assert (and ( <  in2 in0) ( <  in3 in1) ( <  in4 in2) ( <  in5 in3) ( <  in6 in4) ( <  in7 in5) ( <  in8 in6) ( <  in9 in7) ( <  in10 in8) ( <  in11 in9) ( <  in12 in10) ( <  in13 in11) ( <  in14 in12) ( <  in15 in13) ( <  in16 in14) ( <  in17 in15) ( <  in18 in16) ( <  in19 in17) ( <  in20 in18) ( <  in21 in19) ( <  in22 in20) ( <  in23 in21) ( <  in24 in22) ( <  in25 in23) ( <  in26 in24) ( <  in27 in25) ( <  in28 in26) ( <  in29 in27) ( <  in29 in0) ( <  in1 in-1) ( <  in2 in0) ( <  in3 in1) ( <  in4 in2) ( <  in5 in3) ( <  in6 in4) ( <  in7 in5) ( <  in8 in6) ( <  in9 in7) ( <  in10 in8) ( <  in11 in9) ( <  in12 in10) ( <  in13 in11) ( <  in14 in12) ( <  in15 in13) ( <  in16 in14) ( <  in17 in15) ( <  in18 in16) ( <  in19 in17) ( <  in20 in18) ( <  in21 in19) ( <  in22 in20) ( <  in23 in21) ( <  in24 in22) ( <  in25 in23) ( <  in26 in24) ( <  in27 in25) ( <  in28 in26)))",
         "equivalent": false
+      }
+    }
+  },
+  "WeirdHundred": {
+    "succeeded": true,
+    "attempts": 2,
+    "examples_right": 30,
+    "generalisation": {
+      "1": {
+        "expected": {
+          "constants": [],
+          "assertions": []
+        },
+        "predicted": "",
+        "equivalent": true
+      },
+      "2": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in1 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100)))",
+        "equivalent": true
+      },
+      "3": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100)))",
+        "equivalent": true
+      },
+      "4": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100)))",
+        "equivalent": true
+      },
+      "5": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100)))",
+        "equivalent": true
+      },
+      "6": {
+        "expected": {
+          "constants": [
+            "(declare-const in5 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100)))",
+        "equivalent": true
+      },
+      "7": {
+        "expected": {
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100)))",
+        "equivalent": true
+      },
+      "8": {
+        "expected": {
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100)))",
+        "equivalent": true
+      },
+      "9": {
+        "expected": {
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100)))",
+        "equivalent": true
+      },
+      "10": {
+        "expected": {
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100)))",
+        "equivalent": true
+      },
+      "11": {
+        "expected": {
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100)))",
+        "equivalent": true
+      },
+      "12": {
+        "expected": {
+          "constants": [
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100)))",
+        "equivalent": true
+      },
+      "13": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in12 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100)))",
+        "equivalent": true
+      },
+      "14": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100)))",
+        "equivalent": true
+      },
+      "15": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in14 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100)))",
+        "equivalent": true
+      },
+      "16": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100)))",
+        "equivalent": true
+      },
+      "17": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in16 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100)))",
+        "equivalent": true
+      },
+      "18": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100)))",
+        "equivalent": true
+      },
+      "19": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100)))",
+        "equivalent": true
+      },
+      "20": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100)))",
+        "equivalent": true
+      },
+      "21": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100)))",
+        "equivalent": true
+      },
+      "22": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100)))",
+        "equivalent": true
+      },
+      "23": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100)))",
+        "equivalent": true
+      },
+      "24": {
+        "expected": {
+          "constants": [
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in20 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100)))",
+        "equivalent": true
+      },
+      "25": {
+        "expected": {
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100))  ( >=  in24 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100) ( >=  in24 100)))",
+        "equivalent": true
+      },
+      "26": {
+        "expected": {
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100))  ( >=  in24 100))  ( >=  in25 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100) ( >=  in24 100) ( >=  in25 100)))",
+        "equivalent": true
+      },
+      "27": {
+        "expected": {
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100))  ( >=  in24 100))  ( >=  in25 100))  ( >=  in26 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100) ( >=  in24 100) ( >=  in25 100) ( >=  in26 100)))",
+        "equivalent": true
+      },
+      "28": {
+        "expected": {
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in27 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100))  ( >=  in24 100))  ( >=  in25 100))  ( >=  in26 100))  ( >=  in27 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100) ( >=  in24 100) ( >=  in25 100) ( >=  in26 100) ( >=  in27 100)))",
+        "equivalent": true
+      },
+      "29": {
+        "expected": {
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in28 Int)",
+            "(declare-const in27 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100))  ( >=  in24 100))  ( >=  in25 100))  ( >=  in26 100))  ( >=  in27 100))  ( >=  in28 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100) ( >=  in24 100) ( >=  in25 100) ( >=  in26 100) ( >=  in27 100) ( >=  in28 100)))",
+        "equivalent": true
+      },
+      "30": {
+        "expected": {
+          "constants": [
+            "(declare-const in20 Int)",
+            "(declare-const in22 Int)",
+            "(declare-const in21 Int)",
+            "(declare-const in24 Int)",
+            "(declare-const in23 Int)",
+            "(declare-const in26 Int)",
+            "(declare-const in25 Int)",
+            "(declare-const in28 Int)",
+            "(declare-const in27 Int)",
+            "(declare-const in29 Int)",
+            "(declare-const in0 Int)",
+            "(declare-const in2 Int)",
+            "(declare-const in1 Int)",
+            "(declare-const in4 Int)",
+            "(declare-const in3 Int)",
+            "(declare-const in6 Int)",
+            "(declare-const in5 Int)",
+            "(declare-const in8 Int)",
+            "(declare-const in7 Int)",
+            "(declare-const in11 Int)",
+            "(declare-const in10 Int)",
+            "(declare-const in9 Int)",
+            "(declare-const in13 Int)",
+            "(declare-const in12 Int)",
+            "(declare-const in15 Int)",
+            "(declare-const in14 Int)",
+            "(declare-const in17 Int)",
+            "(declare-const in16 Int)",
+            "(declare-const in19 Int)",
+            "(declare-const in18 Int)"
+          ],
+          "assertions": [
+            "(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100))  ( >=  in10 100))  ( >=  in11 100))  ( >=  in12 100))  ( >=  in13 100))  ( >=  in14 100))  ( >=  in15 100))  ( >=  in16 100))  ( >=  in17 100))  ( >=  in18 100))  ( >=  in19 100))  ( >=  in20 100))  ( >=  in21 100))  ( >=  in22 100))  ( >=  in23 100))  ( >=  in24 100))  ( >=  in25 100))  ( >=  in26 100))  ( >=  in27 100))  ( >=  in28 100))  ( >=  in29 100)))"
+          ]
+        },
+        "predicted": "(assert (and (and (not ( = in0 1))  ( =  in0 0)) ( >=  in1 100) ( >=  in2 100) ( >=  in3 100) ( >=  in4 100) ( >=  in5 100) ( >=  in6 100) ( >=  in7 100) ( >=  in8 100) ( >=  in9 100) ( >=  in10 100) ( >=  in11 100) ( >=  in12 100) ( >=  in13 100) ( >=  in14 100) ( >=  in15 100) ( >=  in16 100) ( >=  in17 100) ( >=  in18 100) ( >=  in19 100) ( >=  in20 100) ( >=  in21 100) ( >=  in22 100) ( >=  in23 100) ( >=  in24 100) ( >=  in25 100) ( >=  in26 100) ( >=  in27 100) ( >=  in28 100) ( >=  in29 100)))",
+        "equivalent": true
       }
     }
   }

@@ -1,0 +1,938 @@
+
+############################################################
+I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:
+
+The constraints for input (N=1):
+
+None
+
+
+The constraints for input (N=2):
+
+(assert (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100)))
+
+
+The constraints for input (N=3):
+
+(assert (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100)))
+
+
+The constraints for input (N=4):
+
+(assert (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100)))
+
+
+The constraints for input (N=5):
+
+(assert (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100)))
+
+
+The constraints for input (N=6):
+
+(assert (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100)))
+
+
+The constraints for input (N=7):
+
+(assert (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100)))
+
+
+The constraints for input (N=8):
+
+(assert (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100)))
+
+
+The constraints for input (N=9):
+
+(assert (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100)))
+
+
+The constraints for input (N=10):
+
+(assert (and (and (and (and (and (and (and (and (and (and (not ( = in0 1))  ( =  in0 0))  ( >=  in1 100))  ( >=  in2 100))  ( >=  in3 100))  ( >=  in4 100))  ( >=  in5 100))  ( >=  in6 100))  ( >=  in7 100))  ( >=  in8 100))  ( >=  in9 100)))
+
+
+Here is more context for you to generalize the constraints better. Below is the source code for the SPF problem:
+
+```java
+package own;
+
+import gov.nasa.jpf.symbc.Debug;
+
+public class WeirdHundred {
+
+    public static void algo(int[] a) {
+        boolean fail = false;
+        boolean skip = false;
+        final int N = a.length;
+        for (int i = 0; i < N; i++) {
+            if (i == 0){
+                continue;
+            }
+            boolean option1 = a[0] == 1 && a[i] < 100;
+            boolean option2 = a[0] == 0 && a[i] >= 100;
+            if (option1 || option2){
+                // Skip
+                skip = true;
+            } else {
+                fail = true;
+            }
+        }
+        if (!fail) {
+            int aa = 99999;
+            for (int i = 0; i < N; i++) {
+                aa = aa*aa;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        final int N = Integer.parseInt(args[0]);
+
+        int a[] = new int[N];
+        for (int i = 0; i < N; i++) {
+            a[i] = Debug.makeSymbolicInteger("in"+i);
+        }
+
+        // We only measure the complexity of this function itself.
+        algo(a);
+    }
+}
+
+```
+
+
+Generalize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint string for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.
+
+Use this code template to formally express the generalisation for N constraints:
+```python
+def generate_constraints(N: int) -> str:
+
+    # Do some logic here to return a SMT-LIB Format String e.g. (assert (and (op1 x y) (op2 x z)))
+
+    return constraints
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)```
+
+Each inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).
+############################################################
+CASUAL
+
+Alright, so the task here is to generalize the constraints you’ve derived for a valid input set to determine the worst-case performance of your function considering input size \( N \). From the examples, we can see that for any \( N > 1 \), the constraints follow a consistent pattern: we start with the condition involving `in0`, which has to be 0, and if it's something else, then it fails. The values of `in1` to `in(N-1)` must also be greater than or equal to 100. So essentially, for each increment in \( N \), we're just adding another condition that `in(N-1)` must be at least 100 while keeping the first condition about `in0`. 
+
+Now let’s create a Python function that can dynamically generate this SMT-LIB constraint structure based on an input \( N \). This will allow you to retrieve these conditions efficiently for any size you wish to analyze.
+
+FORMAL
+```python
+def generate_constraints(N: int) -> str:
+    if N < 1:
+        return "Invalid input: N must be at least 1."
+
+    constraints = []
+
+    # Add the condition for in0
+    constraints.append("(and (not (= in0 1)) (= in0 0))")
+
+    # Add conditions for in1 to in(N-1)
+    for i in range(1, N):
+        constraints.append(f"(>= in{i} 100)")
+
+    result = "(assert (and " + " ".join(constraints) + "))"
+    return result
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+############################################################
+                     ATTEMPT 1
+############################################################
+                     Checking Equivalence for N=1
+Constraints are not logically equivalent - one empty, one not.
+
+                    N=1: Not Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_2.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_3.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_4.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=4: Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_5.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_6.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=6: Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_7.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_8.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=8: Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_9.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_10.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=10: Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_11.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_12.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=12: Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_13.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_14.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=14: Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_15.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_16.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=16: Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_17.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_18.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=18: Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_19.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_20.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=20: Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_21.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_22.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=22: Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_23.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_24.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=24: Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_25.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_26.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=26: Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_27.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_28.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=28: Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_29.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_30.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=30: Equivalent
+
+#################### Retrying Generalisation ####################
+
+############################################################
+The generalization is not correct. Remember to always structure your reply with the same headings. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'. Remember to use SMT-LIB format for the constraints and output a valid python program.
+
+For N=1: The correct constraints are:
+
+None
+
+Your generalisation implies the set:
+
+(assert (and (and (not (= in0 1)) (= in0 0))))
+
+
+This is not correct. 
+
+
+For N=2: the generalisation is correct.
+
+
+For N=3: the generalisation is correct.
+
+
+For N=4: the generalisation is correct.
+
+
+For N=5: the generalisation is correct.
+
+
+For N=6: the generalisation is correct.
+
+
+For N=7: the generalisation is correct.
+
+
+For N=8: the generalisation is correct.
+
+
+For N=9: the generalisation is correct.
+
+
+For N=10: the generalisation is correct.
+
+############################################################
+CASUAL
+
+Alright, got it! So the first case where \( N=1 \) indeed returns no constraints. That makes sense since the function doesn't perform checks for that single input; it simply bypasses it. For values \( N \geq 2 \), we have consistent conditions regarding `in0` and a series of inequalities for the rest. This means we need to adjust the logic in our function accordingly to ensure it accounts for this specific case where \( N=1 \) doesn't generate any assertions but everything else does follow the established logic. 
+
+Let’s fix the Python function to make sure it correctly generates constraints in the SMT-LIB format according to your criteria.
+
+FORMAL
+```python
+def generate_constraints(N: int) -> str:
+    if N < 1:
+        return "Invalid input: N must be at least 1."
+    
+    constraints = []
+    
+    if N > 1:
+        # Add the condition for in0
+        constraints.append("(and (not (= in0 1)) (= in0 0))")
+
+        # Add conditions for in1 to in(N-1)
+        for i in range(1, N):
+            constraints.append(f"(>= in{i} 100)")
+
+    if constraints:
+        result = "(assert (and " + " ".join(constraints) + "))"
+    else:
+        result = "None"  # No constraints for N=1
+    
+    return result
+
+N = int(input("N="))
+constraints = generate_constraints(N)
+print(constraints)
+```
+############################################################
+                     ATTEMPT 2
+############################################################
+                     Checking Equivalence for N=1
+Constraints are logically equivalent - both empty.
+
+                    N=1: Equivalent
+
+############################################################
+                     Checking Equivalence for N=2
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_2.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=2: Equivalent
+
+############################################################
+                     Checking Equivalence for N=3
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_3.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=3: Equivalent
+
+############################################################
+                     Checking Equivalence for N=4
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_4.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=4: Equivalent
+
+############################################################
+                     Checking Equivalence for N=5
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_5.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=5: Equivalent
+
+############################################################
+                     Checking Equivalence for N=6
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_6.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=6: Equivalent
+
+############################################################
+                     Checking Equivalence for N=7
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_7.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=7: Equivalent
+
+############################################################
+                     Checking Equivalence for N=8
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_8.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=8: Equivalent
+
+############################################################
+                     Checking Equivalence for N=9
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_9.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=9: Equivalent
+
+############################################################
+                     Checking Equivalence for N=10
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_10.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=10: Equivalent
+
+############################################################
+                     Checking Equivalence for N=11
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_11.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=11: Equivalent
+
+############################################################
+                     Checking Equivalence for N=12
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_12.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=12: Equivalent
+
+############################################################
+                     Checking Equivalence for N=13
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_13.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=13: Equivalent
+
+############################################################
+                     Checking Equivalence for N=14
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_14.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=14: Equivalent
+
+############################################################
+                     Checking Equivalence for N=15
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_15.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=15: Equivalent
+
+############################################################
+                     Checking Equivalence for N=16
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_16.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=16: Equivalent
+
+############################################################
+                     Checking Equivalence for N=17
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_17.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=17: Equivalent
+
+############################################################
+                     Checking Equivalence for N=18
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_18.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=18: Equivalent
+
+############################################################
+                     Checking Equivalence for N=19
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_19.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=19: Equivalent
+
+############################################################
+                     Checking Equivalence for N=20
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_20.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=20: Equivalent
+
+############################################################
+                     Checking Equivalence for N=21
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_21.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=21: Equivalent
+
+############################################################
+                     Checking Equivalence for N=22
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_22.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=22: Equivalent
+
+############################################################
+                     Checking Equivalence for N=23
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_23.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=23: Equivalent
+
+############################################################
+                     Checking Equivalence for N=24
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_24.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=24: Equivalent
+
+############################################################
+                     Checking Equivalence for N=25
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_25.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=25: Equivalent
+
+############################################################
+                     Checking Equivalence for N=26
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_26.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=26: Equivalent
+
+############################################################
+                     Checking Equivalence for N=27
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_27.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=27: Equivalent
+
+############################################################
+                     Checking Equivalence for N=28
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_28.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=28: Equivalent
+
+############################################################
+                     Checking Equivalence for N=29
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_29.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=29: Equivalent
+
+############################################################
+                     Checking Equivalence for N=30
+Created gpt-4o-mini/generals/WeirdHundred/WeirdHundred_30.smt2. Now invoking Z3...
+
+Z3 Output:
+unsat
+unsat
+
+Constraints are logically equivalent.
+
+                    N=30: Equivalent
+
+Generalization verified successfully for all examples.
