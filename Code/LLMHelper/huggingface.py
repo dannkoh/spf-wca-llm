@@ -27,13 +27,12 @@ class HuggingFaceModel(BaseLLMHelper):
         """
         Setup the Qwen model using the given configuration.
         """
-        tokenizer = transformers.AutoTokenizer.from_pretrained(
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(
             self.model_name,
             trust_remote_code=True,
             token=self.token
         )
         
-        # Prepare quantization configuration if specified
         quantization_config = None
         if self.quantization_mode == "4bit":
             quantization_config = transformers.BitsAndBytesConfig(
@@ -47,7 +46,6 @@ class HuggingFaceModel(BaseLLMHelper):
                 load_in_8bit=True
             )
         
-        # Build arguments for model loading
         model_kwargs = {
             "trust_remote_code": True,
             "torch_dtype": torch.float16,
@@ -64,7 +62,7 @@ class HuggingFaceModel(BaseLLMHelper):
         self.pipeline = transformers.pipeline(
             "text-generation",
             model=model,
-            tokenizer=tokenizer,
+            tokenizer=self.tokenizer,
             max_new_tokens=1024,
         )
         self.reduction_sizes = [8, 6, 4, 3, 2, 1]
@@ -103,14 +101,14 @@ class HuggingFaceModel(BaseLLMHelper):
             return ResponseLLMHelper.build_obj("Error: Unexpected response format")
         except Exception as e:
             return ResponseLLMHelper.build_obj(f"Error processing response: {str(e)}")
-
+        
     def get_response(self, history: List[Dict[str, str]], **kwargs) -> Dict[str, str]:
         limit = 12
         reduction_index = 0
         current_history = history.copy()
         while limit > 0:
             try:
-                response = self.pipeline(current_history)
+                response = self.pipeline(self._process_query(current_history) if self.__chat_template(self.model_name) else current_history)
                 return self._process_response(response=response)
             except Exception as e:
                 error_msg = str(e)
@@ -129,3 +127,19 @@ class HuggingFaceModel(BaseLLMHelper):
                     print(f"Unexpected error: {error_msg}")
                     return self._process_response(response=f"Error: {error_msg}")
         return self._process_response(response="Error: Max retries exceeded.")
+
+    def _process_query(self, history: List[Dict[str, str]]) -> str:
+        """
+        Process the conversation history to generate a query.
+        """
+        return self.tokenizer.apply_chat_template(
+            history,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+
+    def __chat_template(self, model: str) -> bool:
+        models = [
+            "Qwen"
+        ]
+        return any([model.startswith(m) for m in models])

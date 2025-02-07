@@ -908,14 +908,15 @@ if __name__ == "__main__":
             os.makedirs(f"{args.model}")
         resultsFolder = f"{args.model}"
     elif args.model_type == "huggingface":
+        quantization_mode = args.quantization
+        llm_helper = huggingface.HuggingFaceModel(
+            model_name=args.model,
+            token=os.getenv("HUGGINGFACE_TOKEN"),
+            quantization_mode=quantization_mode
+        )
         quantization_mode = args.quantization if args.quantization else "full"
         folder_suffix = f"-{args.quantization}" if args.quantization else "-full"
         resultsFolder = f"{args.model}{folder_suffix}"
-
-        llm_helper = huggingface.HuggingFaceModelFactory.create(
-            model_name=args.model,
-            token=os.getenv("HUGGINGFACE_TOKEN"),
-        )
         if not os.path.exists(resultsFolder):
             os.makedirs(resultsFolder)
 
