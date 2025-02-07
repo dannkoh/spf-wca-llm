@@ -1,0 +1,8 @@
+{
+  "succeeded": 2,
+  "failed": 2,
+  "average_attempts": 5.5,
+  "max_attempts": 10,
+  "average_examples_right": 15.0,
+  "max_examples_right": 30
+}
