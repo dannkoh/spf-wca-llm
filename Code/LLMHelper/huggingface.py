@@ -23,6 +23,7 @@ class HuggingFaceModel(BaseLLMHelper):
         self.quantization_mode = quantization_mode
         self.token = token
         self.model_name = model_name
+        self._setup_model()
 
     def _setup_model(self) -> None:
         """
