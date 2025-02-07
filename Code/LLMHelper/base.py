@@ -27,8 +27,7 @@ class BaseLLMHelper(ABC):
         Abstract method to setup the language model.
         """
         pass
-
-    
+ 
 class ResponseLLMHelper:
     """
     A helper class to mock the responses from language models to a standard format.

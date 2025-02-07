@@ -840,27 +840,27 @@ prompts = {
 
 # Define directories
 directories = [
-    # "../Dataset/spf_output/SameHundred/verbose/heuristic",
-    # "../Dataset/spf_output/SameLowercase/verbose/heuristic",
-    # "../Dataset/spf_output/SameOnlyThird/verbose/heuristic",
-    # "../Dataset/spf_output/SameString/verbose/heuristic",
-    # "../Dataset/spf_output/SimpleAscendingLast/verbose/heuristic",
-    # "../Dataset/spf_output/SimpleEveryThird/verbose/heuristic",
-    # "../Dataset/spf_output/SimpleSignFlip/verbose/heuristic",
-    # "../Dataset/spf_output/SimpleSymmetric/verbose/heuristic",
-    # "../Dataset/spf_output/SimpleTrueFalse/verbose/heuristic",
-    # "../Dataset/spf_output/SimpleUnique/verbose/heuristic",
-    # "../Dataset/spf_output/WeirdConstDiff/verbose/heuristic",
-    # "../Dataset/spf_output/WeirdFibonacci/verbose/heuristic",
-    # "../Dataset/spf_output/WeirdTimes/verbose/heuristic",
-    # "../Dataset/spf_output/BadgerHash/verbose/heuristic",
-    # "../Dataset/spf_output/BadgerPassword/verbose/heuristic",
-    # "../Dataset/spf_output/BadgerUsername/verbose/heuristic",
+    "../Dataset/spf_output/SameHundred/verbose/heuristic",
+    "../Dataset/spf_output/SameLowercase/verbose/heuristic",
+    "../Dataset/spf_output/SameOnlyThird/verbose/heuristic",
+    "../Dataset/spf_output/SameString/verbose/heuristic",
+    "../Dataset/spf_output/SimpleAscendingLast/verbose/heuristic",
+    "../Dataset/spf_output/SimpleEveryThird/verbose/heuristic",
+    "../Dataset/spf_output/SimpleSignFlip/verbose/heuristic",
+    "../Dataset/spf_output/SimpleSymmetric/verbose/heuristic",
+    "../Dataset/spf_output/SimpleTrueFalse/verbose/heuristic",
+    "../Dataset/spf_output/SimpleUnique/verbose/heuristic",
+    "../Dataset/spf_output/WeirdConstDiff/verbose/heuristic",
+    "../Dataset/spf_output/WeirdFibonacci/verbose/heuristic",
+    "../Dataset/spf_output/WeirdTimes/verbose/heuristic",
+    "../Dataset/spf_output/BadgerHash/verbose/heuristic",
+    "../Dataset/spf_output/BadgerPassword/verbose/heuristic",
+    "../Dataset/spf_output/BadgerUsername/verbose/heuristic",
     "../Dataset/spf_output/ComplexFlipPos_2/verbose/heuristic",
-    # "../Dataset/spf_output/ComplexHalfEqual/verbose/heuristic",
-    # "../Dataset/spf_output/ComplexMidPeak/verbose/heuristic",
-    # "../Dataset/spf_output/ComplexPalindrome/verbose/heuristic",
-    # "../Dataset/spf_output/ComplexOddsEvens/verbose/heuristic",
+    "../Dataset/spf_output/ComplexHalfEqual/verbose/heuristic",
+    "../Dataset/spf_output/ComplexMidPeak/verbose/heuristic",
+    "../Dataset/spf_output/ComplexPalindrome/verbose/heuristic",
+    "../Dataset/spf_output/ComplexOddsEvens/verbose/heuristic",
     "../Dataset/spf_output/WeirdHundred/verbose/heuristic",
 
 
@@ -884,6 +884,15 @@ if __name__ == "__main__":
         required=True,
         help="Model identifier"
     )
+
+    arguments.add_argument(
+        "-q",
+        "--quantization",
+        choices=["4bit", "8bit"],
+        help="Quantization type (Optional)",
+        default=None
+    )
+
     args = arguments.parse_args()
 
     MAX_EXAMPLES = 30
@@ -899,13 +908,16 @@ if __name__ == "__main__":
             os.makedirs(f"{args.model}")
         resultsFolder = f"{args.model}"
     elif args.model_type == "huggingface":
+        quantization_mode = args.quantization if args.quantization else "full"
+        folder_suffix = f"-{args.quantization}" if args.quantization else "-full"
+        resultsFolder = f"{args.model}{folder_suffix}"
+
         llm_helper = huggingface.HuggingFaceModelFactory.create(
             model_name=args.model,
             token=os.getenv("HUGGINGFACE_TOKEN"),
         )
-        if not os.path.exists(f"{args.model}"):
-            os.makedirs(f"{args.model}")
-        resultsFolder = f"{args.model}"
+        if not os.path.exists(resultsFolder):
+            os.makedirs(resultsFolder)
 
     # Run the experiment
     experiment = Experiment(
