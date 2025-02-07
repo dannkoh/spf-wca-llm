@@ -19,7 +19,8 @@ class HuggingFaceModel(BaseLLMHelper):
         """
         if model_name is None or token is None:
             raise ValueError(f"{'token' if token is None else 'model_name'} is required.")
-        self.quantization_mode = quantization_mode.lower()
+        
+        self.quantization_mode = quantization_mode
         self.token = token
         self.model_name = model_name
 
