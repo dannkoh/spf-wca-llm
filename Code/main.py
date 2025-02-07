@@ -836,7 +836,7 @@ prompts = {
     "get_gen_format": "Your response was not correct. Your 'FORMAL' section should use the template provided below, ensure your code below adheres to the SMTLIB format and should be a valid python program. Please provide the correct code.",
     "get_gen_format2": "Your code MUST return a single string that represents the constraints in SMT-LIB format.",
     "get_gen_format3": "Remember to always structure your reply as follows:\n\nCASUAL:\n[CASUAL EXPLAINATION HERE]\n\nFORMAL:\n```python\n[PYTHON CODE HERE]\n```\n",
-    "get_gen_feedback": "The generalization is not correct. Remember to always structure your reply with the same headings. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'. Remember to use SMT-LIB format for the constraints and output a valid python program.",
+    "get_gen_feedback": "The generalization is not correct. Remember to always structure your reply as follows:\n\nCASUAL:\n[CASUAL EXPLAINATION HERE]\n\nFORMAL:\n```python\n[PYTHON CODE HERE]\n```\n. I have applied your generalisation for several concrete values of N. Some of the outputs were not correct. Change your generalisation to account for the following outputs. Remember to always structure your reply with the headings 'CASUAL' and 'FORMAL'. Remember to use SMT-LIB format for the constraints and output a valid python program.",
 }
 
 # Define directories
