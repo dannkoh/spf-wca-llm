@@ -289,7 +289,7 @@ class Experiment:
         prompt_get_gen += self.prompts["get_gen_example"]
         return prompt_get_gen
 
-    def validPython(self,generalisation):
+    def validPython(generalisation):
         """Check if generalization is valid and follows expected format."""
         try:
             # Create namespace with mocked input
