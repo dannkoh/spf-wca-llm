@@ -282,11 +282,11 @@ class Experiment:
         prompt_get_gen += source_code
         prompt_get_gen += self.prompts["get_gen_end"]
         prompt_get_gen += self.prompts["get_gen_end1"]
+        prompt_get_gen += self.prompts["get_gen_end2"]
         with open("python_code_template.py", "r") as file:
             template_code = file.read()
         prompt_get_gen += template_code
-        prompt_get_gen += self.prompts["get_gen_end2"]
-
+        prompt_get_gen += self.prompts["get_gen_example"]
         return prompt_get_gen
 
     def validPython(generalisation):
