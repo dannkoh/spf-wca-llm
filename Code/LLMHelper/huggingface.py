@@ -65,7 +65,7 @@ class HuggingFaceModel(BaseLLMHelper):
             "text-generation",
             model=model,
             tokenizer=self.tokenizer,
-            max_new_tokens=1024,
+            max_new_tokens=16000,
         )
         self.reduction_sizes = [8, 6, 4, 3, 2, 1]
 
