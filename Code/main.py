@@ -310,81 +310,70 @@ class Experiment:
         except Exception:
             return False
 
-    def extract_generalisation(
-        self, content_get_gen, llm_history, depth=0, max_depth=3
-    ):
+    def extract_generalisation(self, content_get_gen, llm_history, depth=0, max_depth=3):
         """
         Extract the generalization code from the LLM's response.
 
         Args:
             content_get_gen (str): The content from the LLM's response.
             llm_history (list): The LLM conversation history.
+            depth (int): Current recursive depth.
+            max_depth (int): Maximum allowed recursion depth.
 
         Returns:
             str: The extracted generalization code, or None if extraction fails.
         """
         if depth >= max_depth:
             return None
-        if "FORMAL" in content_get_gen:
-            generalisation = content_get_gen.split("FORMAL", 1)[1].strip(":\n ")
-            # Extract code block
-            if "```python" in generalisation:
-                generalisation = (
-                    generalisation.split("```python")[1].split("```")[0].strip()
-                )
-            elif "```" in generalisation:
-                generalisation = generalisation.split("```")[1].split("```")[0].strip()
-            else:
-                generalisation = generalisation.strip()
 
-            # Ensure the code is properly formatted to accept N as a parameter
-            if (
-                "def generate_constraints(N: int) -> str:" not in generalisation
-                or not Experiment.validPython(generalisation)
-            ):
-                self.conversation_handler.load("Failed to extract generalisation.")
-                self.conversation_handler.load(
-                    f"def generate_constraints(N): found: {True if 'def generate_constraints(N: int) -> str:' in generalisation else False}"
-                )
-                self.conversation_handler.load(
-                    f"Valid Python: {Experiment.validPython(generalisation)}"
-                )
-                # Provide feedback to the LLM to correct the code format
-                correction_prompt = self.prompts["get_gen_format"]
-                correction_prompt += self.prompts["get_gen_format2"]
-                correction_prompt += self.prompts["get_gen_end1"]
-                with open("python_code_template.py", "r") as file:
-                    template_code = file.read()
-                correction_prompt += template_code
-                correction_prompt += self.prompts["get_gen_end2"]
-                llm_history.append({"role": "user", "content": correction_prompt})
-
-                response = self.llm_helper.get_response(history=llm_history)
-                content = response.choices[0].message.content
-                self.conversation_handler.print_and_save(content)
-                llm_history.append({"role": "assistant", "content": content})
-                return self.extract_generalisation(
-                    content, llm_history, depth=depth + 1
-                )
-            return generalisation
-        else:
-            self.conversation_handler.load("Failed to extract generalisation.")                # Provide feedback to the LLM to correct the code format
-            correction_prompt = self.prompts["get_gen_format"]
-            correction_prompt += self.prompts["get_gen_format2"]
-            correction_prompt += self.prompts["get_gen_end1"]
+        def build_correction_prompt():
+            correction_prompt = (
+                self.prompts["get_gen_format"]
+                + self.prompts["get_gen_format2"]
+                + self.prompts["get_gen_format3"]
+                + self.prompts["get_gen_end1"]
+            )
             with open("python_code_template.py", "r") as file:
-                template_code = file.read()
-            correction_prompt += template_code
+                correction_prompt += file.read()
             correction_prompt += self.prompts["get_gen_end2"]
+            return correction_prompt
+
+        def extract_code(text):
+            # Assume the text after "FORMAL" contains the code and remove leading punctuation/whitespace.
+            code_segment = text.split("FORMAL", 1)[1].lstrip(":\n ").strip()
+            if "```python" in code_segment:
+                return code_segment.split("```python", 1)[1].split("```", 1)[0].strip()
+            elif "```" in code_segment:
+                return code_segment.split("```", 1)[1].split("```", 1)[0].strip()
+            return code_segment.strip()
+
+        # Attempt to extract code if a "FORMAL" section is present.
+        if "FORMAL" in content_get_gen:
+            generalisation = extract_code(content_get_gen)
+        else:
+            generalisation = ""
+
+        is_valid = (
+            "def generate_constraints(N: int) -> str:" in generalisation
+            and Experiment.validPython(generalisation)
+        )
+
+        if not is_valid:
+            self.conversation_handler.load("Failed to extract generalisation.")
+            self.conversation_handler.load(
+                f"def generate_constraints(N: int) -> str: found: {'Yes' if 'def generate_constraints(N: int) -> str:' in generalisation else 'No'}"
+            )
+            self.conversation_handler.load(f"Valid Python: {Experiment.validPython(generalisation)}")
+            correction_prompt = build_correction_prompt()
             llm_history.append({"role": "user", "content": correction_prompt})
 
             response = self.llm_helper.get_response(history=llm_history)
-            content = response.choices[0].message.content
-            self.conversation_handler.print_and_save(content)
-            llm_history.append({"role": "assistant", "content": content})
-            return self.extract_generalisation(
-                content, llm_history, depth=depth + 1
-            )
+            new_content = response.choices[0].message.content
+            self.conversation_handler.print_and_save(new_content)
+            llm_history.append({"role": "assistant", "content": new_content})
+            return self.extract_generalisation(new_content, llm_history, depth=depth + 1, max_depth=max_depth)
+
+        return generalisation
 
 
     def evaluate_and_update_generalisation(
@@ -831,8 +820,9 @@ prompts = {
     "get_gen_sys": "Always respond first with an informal analysis in natural language (under the heading 'CASUAL', all caps), then with a formal Python program that outputs constraints in SMT-LIB format inside a code block (under the heading 'FORMAL', all caps). Make sure there is only one code block in your answer.",
     "get_gen_start": "I'm experimenting with a program to understand how input conditions influence its worst-case performance, particularly in terms of finding the longest execution path as the input size increases. By conducting a worst-case analysis, I aim to identify constraints that define a valid input set at different input sizes (N). So far, I have found one possible set of correct constraints/conditions (not the only one) that characterize such valid inputs. Here they are:",
     "get_gen_end": "\n\nGeneralize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint string for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.",
-    "get_gen_end1": "\n\nUse this code template to formally express the generalisation for N constraints:\n```python\n",
-    "get_gen_end2": "```\n\nEach inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).",
+    "get_gen_end1": "```\n\nEach inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).",
+    "get_gen_end2": "\n\nStructure your response in the following format and use this code template:\n\nCASUAL:\n[CASUAL EXPLAINATION HERE]\n\nFORMAL:\n```python\n",
+    "get_gen_example": "\n\nExample 1:\n\nCASUAL: 'Fibonacci numbers sum the two previous ones.'\n\nFORMAL: ```python\ndef fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)",
     "get_gen_format": "Your response was not correct. Your 'FORMAL' section should use the template provided below, ensure your code below adheres to the SMTLIB format and should be a valid python program. Please provide the correct code.",
     "get_gen_format2": "Your code MUST return a single string that represents the constraints in SMT-LIB format.",
     "get_gen_format3": "Remember to always structure your reply as follows:\n\nCASUAL:\n[CASUAL EXPLAINATION HERE]\n\nFORMAL:\n```python\n[PYTHON CODE HERE]\n```\n",
