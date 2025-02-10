@@ -289,7 +289,7 @@ class Experiment:
         prompt_get_gen += self.prompts["get_gen_example"]
         return prompt_get_gen
 
-    def validPython(generalisation):
+    def validPython(self,generalisation):
         """Check if generalization is valid and follows expected format."""
         try:
             # Create namespace with mocked input
@@ -300,6 +300,10 @@ class Experiment:
 
             # Check if function exists
             if "generate_constraints" not in namespace:
+                return False
+            
+            if """N = int(input("N="))\nconstraints = generate_constraints(N)\nprint(constraints)""" not in generalisation:
+                print("Missing the final part of the code")
                 return False
 
             # Test function call
@@ -822,7 +826,7 @@ prompts = {
     "get_gen_end": "\n\nGeneralize what makes the set of constraints valid such that we can recover a valid set for N inputs. Provide a Python function that outputs a valid SMT-LIB format assert constraint string for all values of N in SMT-LIB format, matching the format of the examples provided. Ensure the constraints are in canonical form. Don't overfit the data here but also don't oversimplify to the point of trivialness. Make sure none of the given examples contradict your generalization.",
     "get_gen_end1": "```\n\nEach inequality should be in the form '(assert (op x y))', where `x` and `y` are variables, constants, or formulas of variables/constants, and `op` is an operation or inequality (e.g., `=`, `<`, `<=`, `>`, `>=`, `and`, etc.).",
     "get_gen_end2": "\n\nStructure your response in the following format and use this code template:\n\nCASUAL:\n[CASUAL EXPLAINATION HERE]\n\nFORMAL:\n```python\n",
-    "get_gen_example": "\n\nExample 1:\n\nCASUAL: 'Fibonacci numbers sum the two previous ones.'\n\nFORMAL: ```python\ndef fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)",
+    "get_gen_example": """\n\nExample 1:\n\nCASUAL: 'Constraints grow with N'\n\nFORMAL: ```python\ndef generate_constraints(N: int) -> str: \nreturn constraints\nN = int(input("N="))\nconstraints = generate_constraints(N)\nprint(constraints)""",
     "get_gen_format": "Your response was not correct. Your 'FORMAL' section should use the template provided below, ensure your code below adheres to the SMTLIB format and should be a valid python program. Please provide the correct code.",
     "get_gen_format2": "Your code MUST return a single string that represents the constraints in SMT-LIB format.",
     "get_gen_format3": "Remember to always structure your reply as follows:\n\nCASUAL:\n[CASUAL EXPLAINATION HERE]\n\nFORMAL:\n```python\n[PYTHON CODE HERE]\n```\n",
