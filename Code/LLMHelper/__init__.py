@@ -1,6 +1,6 @@
 from .base import BaseLLMHelper
 from .openai import OpenAIHelper
-from .huggingface import HuggingFaceModelFactory
+from .huggingface.huggingface import HuggingFaceModelFactory
 
 __all__ = [
     'BaseLLMHelper',
