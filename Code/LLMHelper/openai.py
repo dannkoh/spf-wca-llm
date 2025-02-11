@@ -85,13 +85,13 @@ class OpenAIHelper(BaseLLMHelper):
                     messages=current_history,
                 )
                 done_it = True
-                return response
+                return self._process_response(response)
             except openai.BadRequestError as e:
                 if "maximum context length" in str(e):
                     print("############################Context too long, reducing context############################")
                     current_history, reduction_index, success = self._reduce_context(current_history, reduction_index)
                     if not success:
-                        return ResponseLLMHelper.build_obj("Error: Context too long even after trying all reductions")
+                        return "Error: Context too long even after trying all reductions"
                     limit -= 1
                     continue
                 return ResponseLLMHelper.build_obj("Error: " + str(e))
@@ -101,7 +101,7 @@ class OpenAIHelper(BaseLLMHelper):
                     print("############################Token limit exceeded, reducing context############################")
                     current_history, reduction_index, success = self._reduce_context(current_history, reduction_index)
                     if not success:
-                        return ResponseLLMHelper.build_obj("Error: Context too long even after trying all reductions")
+                        return "Error: Context too long even after trying all reductions"
                     limit -= 1
                     continue
                 
@@ -114,5 +114,15 @@ class OpenAIHelper(BaseLLMHelper):
                 continue
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
-                return ResponseLLMHelper.build_obj(f"Error: {str(e)}")
-        return ResponseLLMHelper.build_obj("Error: Max retries exceeded")
+                return f"Error: {str(e)}"
+        return "Error: Max retries exceeded"
+
+
+    def _process_response(self, response) -> str:
+        """
+        Process the response from the OpenAI API.
+        """
+        try:
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Error: {str(e)}"

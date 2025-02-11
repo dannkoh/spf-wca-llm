@@ -166,8 +166,7 @@ class Experiment:
         llm_history.append({"role": "user", "content": prompt_get_gen})
 
         # Get the LLM response
-        response_get_gen = self.llm_helper.get_response(history=llm_history)
-        content_get_gen = response_get_gen.choices[0].message.content
+        content_get_gen = self.llm_helper.get_response(history=llm_history)
         self.conversation_handler.print_and_save(content_get_gen)
         llm_history.append({"role": "assistant", "content": content_get_gen})
 
@@ -371,8 +370,7 @@ class Experiment:
             correction_prompt = build_correction_prompt()
             llm_history.append({"role": "user", "content": correction_prompt})
 
-            response = self.llm_helper.get_response(history=llm_history)
-            new_content = response.choices[0].message.content
+            new_content = self.llm_helper.get_response(history=llm_history)
             self.conversation_handler.print_and_save(new_content)
             llm_history.append({"role": "assistant", "content": new_content})
             return self.extract_generalisation(new_content, llm_history, depth=depth + 1, max_depth=max_depth)
@@ -463,9 +461,7 @@ class Experiment:
                 feedback_prompt = self.generate_feedback_prompt(results=success)
                 self.conversation_handler.print_and_save(feedback_prompt)
                 llm_history.append({"role": "user", "content": feedback_prompt})
-                response_get_gen = self.llm_helper.get_response(history=llm_history)
-                print("response_get_gen", response_get_gen)
-                content_get_gen = response_get_gen.choices[0].message.content
+                content_get_gen = self.llm_helper.get_response(history=llm_history)
                 self.conversation_handler.print_and_save(content_get_gen)
                 llm_history.append({"role": "assistant", "content": content_get_gen})
 
@@ -883,7 +879,7 @@ if __name__ == "__main__":
     arguments.add_argument(
         "-q",
         "--quantization",
-        choices=["4bit", "8bit"],
+        choices=["4bit"],
         help="Quantization type (Optional)",
         default=None
     )
@@ -904,7 +900,7 @@ if __name__ == "__main__":
         resultsFolder = f"{args.model}"
     elif args.model_type == "huggingface":
         quantization_mode = args.quantization
-        llm_helper = huggingface.HuggingFaceModel(
+        llm_helper = huggingface.HuggingFaceModelFactory.create(
             model_name=args.model,
             token=os.getenv("HUGGINGFACE_TOKEN"),
             quantization_mode=quantization_mode
