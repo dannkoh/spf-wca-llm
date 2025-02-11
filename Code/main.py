@@ -166,8 +166,7 @@ class Experiment:
         llm_history.append({"role": "user", "content": prompt_get_gen})
 
         # Get the LLM response
-        response_get_gen = self.llm_helper.get_response(history=llm_history)
-        content_get_gen = response_get_gen.choices[0].message.content
+        content_get_gen = self.llm_helper.get_response(history=llm_history)
         self.conversation_handler.print_and_save(content_get_gen)
         llm_history.append({"role": "assistant", "content": content_get_gen})
 
@@ -359,8 +358,7 @@ class Experiment:
                 correction_prompt += self.prompts["get_gen_end2"]
                 llm_history.append({"role": "user", "content": correction_prompt})
 
-                response = self.llm_helper.get_response(history=llm_history)
-                content = response.choices[0].message.content
+                content = self.llm_helper.get_response(history=llm_history)
                 self.conversation_handler.print_and_save(content)
                 llm_history.append({"role": "assistant", "content": content})
                 return self.extract_generalisation(
@@ -378,8 +376,7 @@ class Experiment:
             correction_prompt += self.prompts["get_gen_end2"]
             llm_history.append({"role": "user", "content": correction_prompt})
 
-            response = self.llm_helper.get_response(history=llm_history)
-            content = response.choices[0].message.content
+            content = self.llm_helper.get_response(history=llm_history)
             self.conversation_handler.print_and_save(content)
             llm_history.append({"role": "assistant", "content": content})
             return self.extract_generalisation(
@@ -470,9 +467,7 @@ class Experiment:
                 feedback_prompt = self.generate_feedback_prompt(results=success)
                 self.conversation_handler.print_and_save(feedback_prompt)
                 llm_history.append({"role": "user", "content": feedback_prompt})
-                response_get_gen = self.llm_helper.get_response(history=llm_history)
-                print("response_get_gen", response_get_gen)
-                content_get_gen = response_get_gen.choices[0].message.content
+                content_get_gen = self.llm_helper.get_response(history=llm_history)
                 self.conversation_handler.print_and_save(content_get_gen)
                 llm_history.append({"role": "assistant", "content": content_get_gen})
 
@@ -888,7 +883,7 @@ if __name__ == "__main__":
     arguments.add_argument(
         "-q",
         "--quantization",
-        choices=["4bit", "8bit"],
+        choices=["4bit"],
         help="Quantization type (Optional)",
         default=None
     )

@@ -1,8 +1,8 @@
-import transformers
+from vllm import LLM, SamplingParams
 from LLMHelper.base import ResponseLLMHelper, BaseLLMHelper
-import torch
 import os
 from typing import List, Dict, Any
+import torch
 
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
@@ -10,7 +10,7 @@ class HuggingFaceModel(BaseLLMHelper):
     """
     A scalable HuggingFace model for Qwen variants.
     """
-    def __init__(self, token: str, quantization_mode: str = "", model_name: str = None):
+    def __init__(self, token: str, quantization_mode: str = None, model_name: str = None):
         """
         Args:
             token (str): The access token.
@@ -19,53 +19,34 @@ class HuggingFaceModel(BaseLLMHelper):
         """
         if model_name is None or token is None:
             raise ValueError(f"{'token' if token is None else 'model_name'} is required.")
-        
         self.quantization_mode = quantization_mode
         self.token = token
         self.model_name = model_name
+
+        with open("./.settings","r") as f:
+            settings = f.readlines()
+            setting_line = next((s for s in settings if s.startswith(self.model_name)), None)
+            if setting_line is None:
+                raise ValueError(f"Settings for model {self.model_name} not found.")
+            self.max_tokens = int(setting_line.split(",")[1].strip())
         self._setup_model()
 
     def _setup_model(self) -> None:
         """
         Setup the Qwen model using the given configuration.
         """
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(
-            self.model_name,
+        os.environ["HUGGINGFACE_ACCESS_TOKEN"]=self.token
+        self.pipeline = LLM(
+            model=self.model_name,
             trust_remote_code=True,
-            token=self.token
+            tensor_parallel_size=int(torch.cuda.device_count()),
+            enforce_eager=True,
+            dtype=torch.float16 if self.quantization_mode == "4bit" else None,
+            quantization="bitsandbytes" if self.quantization_mode == "4bit" else None,
+            load_format="bitsandbytes" if self.quantization_mode == "4bit" else None,
         )
-        
-        quantization_config = None
-        if self.quantization_mode == "4bit":
-            quantization_config = transformers.BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_use_double_quant=True,
-                bnb_4bit_quant_type="nf4",
-            )
-        elif self.quantization_mode == "8bit":
-            quantization_config = transformers.BitsAndBytesConfig(
-                load_in_8bit=True
-            )
-        
-        model_kwargs = {
-            "trust_remote_code": True,
-            "torch_dtype": torch.float16,
-            "device_map": "auto",
-            "token": self.token,
-        }
-        if quantization_config is not None:
-            model_kwargs["quantization_config"] = quantization_config
-
-        model = transformers.AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            **model_kwargs
-        )
-        self.pipeline = transformers.pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=self.tokenizer,
-            max_new_tokens= 16_000,
+        self.sampling_params = SamplingParams(
+            max_tokens=self.max_tokens
         )
         self.reduction_sizes = [8, 6, 4, 3, 2, 1]
 
@@ -110,7 +91,11 @@ class HuggingFaceModel(BaseLLMHelper):
         current_history = history.copy()
         while limit > 0:
             try:
-                response = self.pipeline(self._process_query(current_history) if self.__chat_template(self.model_name) else current_history)
+                response = self.pipeline.chat(
+                    messages=current_history,
+                    sampling_params=self.sampling_params,
+                    add_generation_prompt=True,
+                    )
                 return self._process_response(response=response)
             except Exception as e:
                 error_msg = str(e)
@@ -129,19 +114,3 @@ class HuggingFaceModel(BaseLLMHelper):
                     print(f"Unexpected error: {error_msg}")
                     return self._process_response(response=f"Error: {error_msg}")
         return self._process_response(response="Error: Max retries exceeded.")
-
-    def _process_query(self, history: List[Dict[str, str]]) -> str:
-        """
-        Process the conversation history to generate a query.
-        """
-        return self.tokenizer.apply_chat_template(
-            history,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-
-    def __chat_template(self, model: str) -> bool:
-        models = [
-            "Qwen"
-        ]
-        return any([model.startswith(m) for m in models])
