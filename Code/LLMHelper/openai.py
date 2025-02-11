@@ -1,6 +1,6 @@
 import openai
 import time
-from LLMHelper.base import BaseLLMHelper, ResponseLLMHelper
+from LLMHelper.base import BaseLLMHelper
 from tqdm import tqdm
 
 class OpenAIHelper(BaseLLMHelper):
@@ -94,7 +94,7 @@ class OpenAIHelper(BaseLLMHelper):
                         return "Error: Context too long even after trying all reductions"
                     limit -= 1
                     continue
-                return ResponseLLMHelper.build_obj("Error: " + str(e))
+                return "Error: " + str(e)
             except openai.RateLimitError as e:
                 error_msg = str(e)
                 if "tokens" in error_msg and "must be reduced" in error_msg:
