@@ -1,5 +1,5 @@
 from vllm import LLM, SamplingParams
-from LLMHelper.base import ResponseLLMHelper, BaseLLMHelper
+from LLMHelper.base import BaseLLMHelper
 import os
 from typing import List, Dict, Any
 import torch
@@ -66,24 +66,6 @@ class HuggingFaceModel(BaseLLMHelper):
             reduced_history = [msg for msg in reduced_history if msg["role"] != "system"]
 
         return reduced_history, reduction_index + 1, True
-
-    def _process_response(self, response: Any) -> str:
-        try:
-            if isinstance(response, str):
-                return ResponseLLMHelper.build_obj(response)
-            if isinstance(response, list) and 'generated_text' in response[0]:
-                messages = response[0]['generated_text']
-                if isinstance(messages, list):
-                    for msg in messages:
-                        if msg.get('role') == 'assistant':
-                            return ResponseLLMHelper.build_obj(msg.get('content', ''))
-                    return ResponseLLMHelper.build_obj("No assistant response found")
-            generated_text = response[0]['generated_text']
-            if isinstance(generated_text, str):
-                return ResponseLLMHelper.build_obj(generated_text.split("Assistant:")[-1].strip())
-            return ResponseLLMHelper.build_obj("Error: Unexpected response format")
-        except Exception as e:
-            return ResponseLLMHelper.build_obj(f"Error processing response: {str(e)}")
         
     def get_response(self, history: List[Dict[str, str]], **kwargs) -> Dict[str, str]:
         limit = 12
@@ -96,7 +78,7 @@ class HuggingFaceModel(BaseLLMHelper):
                     sampling_params=self.sampling_params,
                     add_generation_prompt=True,
                     )
-                return self._process_response(response=response)
+                return response
             except Exception as e:
                 error_msg = str(e)
                 if ("CUDA out of memory" in error_msg or
@@ -107,10 +89,10 @@ class HuggingFaceModel(BaseLLMHelper):
                         torch.cuda.empty_cache()
                     current_history, reduction_index, success = self._reduce_context(current_history, reduction_index)
                     if not success:
-                        return self._process_response(response="Error: Context too long even after reductions.")
+                        return "Error: Context too long even after reductions."
                     limit -= 1
                     continue
                 else:
                     print(f"Unexpected error: {error_msg}")
-                    return self._process_response(response=f"Error: {error_msg}")
-        return self._process_response(response="Error: Max retries exceeded.")
+                    return f"Error: {error_msg}"
+        return "Error: Max retries exceeded."
