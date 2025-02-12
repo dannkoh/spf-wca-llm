@@ -1,5 +1,5 @@
-from LLMHelper.huggingface.__defaulHelper import HuggingFaceModel
-from .gemma import GemmaModel
+from __defaulHelper import HuggingFaceModel
+from gemma import GemmaModel
 
 all =[
     "HuggingFaceModelFactory",
