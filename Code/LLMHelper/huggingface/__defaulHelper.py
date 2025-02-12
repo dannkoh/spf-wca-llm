@@ -23,7 +23,7 @@ class HuggingFaceModel(BaseLLMHelper):
         self.token = token
         self.model_name = model_name
 
-        with open("spf-wca-llm/Code/.settings","r") as f:
+        with open("spf-wca-llm/Code/settings.llm","r") as f:
             settings = f.readlines()
             setting_line = next((s for s in settings if s.startswith(self.model_name)), None)
             if setting_line is None:
