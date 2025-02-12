@@ -35,13 +35,14 @@ class HuggingFaceModel(BaseLLMHelper):
         """
         Setup the Qwen model using the given configuration.
         """
-        os.environ["HUGGINGFACE_ACCESS_TOKEN"]=self.token
+        os.environ["HF_TOKEN"]=self.token
+        
         self.pipeline = LLM(
             model=self.model_name,
             trust_remote_code=True,
             tensor_parallel_size=int(torch.cuda.device_count()),
             enforce_eager=True,
-            dtype=torch.float16 if self.quantization_mode == "4bit" else None,
+            dtype=torch.float16 if self.quantization_mode == "4bit" else "auto",
             quantization="bitsandbytes" if self.quantization_mode == "4bit" else None,
             load_format="bitsandbytes" if self.quantization_mode == "4bit" else None,
         )
