@@ -81,7 +81,6 @@ class HuggingFaceModel(BaseLLMHelper):
                     add_generation_prompt=True,
                     )
                 return self.__process_response(response)
-                
             except Exception as e:
                 error_msg = str(e)
                 if ("CUDA out of memory" in error_msg or
@@ -100,7 +99,7 @@ class HuggingFaceModel(BaseLLMHelper):
                     return f"Error: {error_msg}"
         return "Error: Max retries exceeded."
 
-    def __process_response(self,response):
+    def __process_response(self,response) -> str:
         try:
             return response[0].outputs[0].text
         except Exception as e:
