@@ -80,9 +80,8 @@ class HuggingFaceModel(BaseLLMHelper):
                     sampling_params=self.sampling_params,
                     add_generation_prompt=True,
                     )
+                return self.__process_response(response)
                 
-
-                return response
             except Exception as e:
                 error_msg = str(e)
                 if ("CUDA out of memory" in error_msg or
