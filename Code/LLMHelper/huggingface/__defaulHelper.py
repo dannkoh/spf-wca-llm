@@ -42,9 +42,10 @@ class HuggingFaceModel(BaseLLMHelper):
             trust_remote_code=True,
             tensor_parallel_size=int(torch.cuda.device_count()),
             enforce_eager=True,
-            dtype=torch.float16 if self.quantization_mode == "4bit" else "auto",
+            dtype='auto',
             quantization="bitsandbytes" if self.quantization_mode == "4bit" else None,
-            load_format="bitsandbytes" if self.quantization_mode == "4bit" else None,
+            disable_custom_all_reduce=True,
+            max_model_len=84560
         )
         self.sampling_params = SamplingParams(
             max_tokens=self.max_tokens
