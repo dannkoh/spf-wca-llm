@@ -80,6 +80,8 @@ class HuggingFaceModel(BaseLLMHelper):
                     sampling_params=self.sampling_params,
                     add_generation_prompt=True,
                     )
+                
+
                 return response
             except Exception as e:
                 error_msg = str(e)
@@ -98,3 +100,9 @@ class HuggingFaceModel(BaseLLMHelper):
                     print(f"Unexpected error: {error_msg}")
                     return f"Error: {error_msg}"
         return "Error: Max retries exceeded."
+
+    def __process_response(self,response):
+        try:
+            return response[0].outputs[0].text
+        except Exception as e:
+            return f"Error: {str(e)}"
