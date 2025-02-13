@@ -45,7 +45,6 @@ class HuggingFaceModel(BaseLLMHelper):
             dtype='auto',
             quantization="bitsandbytes" if self.quantization_mode == "4bit" else None,
             disable_custom_all_reduce=True,
-            max_model_len=84560
         )
         self.sampling_params = SamplingParams(
             max_tokens=self.max_tokens
